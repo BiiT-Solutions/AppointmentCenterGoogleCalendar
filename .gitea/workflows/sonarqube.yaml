@@ -1,0 +1,44 @@
+#Define secret SONARQUBE_TOKEN and var PROJECT in the Gitea project
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    types: [ opened, synchronize, reopened ]
+
+name: SonarQube Scan
+jobs:
+  sonarqube:
+    name: SonarQube Trigger
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checking out
+        uses: actions/checkout@v4
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - name: Download Maven
+        run: |
+          curl -sL https://www-eu.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip -o maven.zip
+          apt-get update
+          apt-get -y install unzip
+          unzip -d /usr/share maven.zip
+          rm maven.zip
+          ln -s /usr/share/apache-maven-3.9.9/bin/mvn /usr/bin/mvn
+          echo "M2_HOME=/usr/share/apache-maven-3.9.9" | tee -a /etc/environment
+      - name: Mvn Settings
+        uses: whelk-io/maven-settings-xml-action@v22
+        with:
+          repositories: '[{ "id": "central", "url": "https://artifactory.biit-solutions.com/artifactory/libs-release" }]'
+          plugin_repositories: '[{ "id": "central", "url": "https://artifactory.biit-solutions.com/artifactory/libs-release" }]'
+          servers: '[{ "id": "central", "username": "${{ vars.ARTIFACTORY_USER }}", "password": "${{ vars.ARTIFACTORY_TOKEN }}" }]'
+      - name: Build and analyze
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONARQUBE_HOST }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=${{ vars.PROJECT }}
