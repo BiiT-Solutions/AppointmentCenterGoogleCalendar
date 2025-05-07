@@ -1,0 +1,14 @@
+.settings
+.project
+.classpath
+gen
+target
+bin
+project.properties
+output.log
+tmp
+
+/pom.xml.releaseBackup
+/release.properties
+.idea/
+*.iml

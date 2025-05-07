@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite thread-count="1" verbose="1" name="Infographic Engine v2">
+    <listeners>
+        <listener class-name="com.biit.appointment.google.logger.TestLogging"/>
+    </listeners>
+
+    <test name="Google CalDAV" enabled="true" preserve-order="true">
+        <groups>
+            <run>
+                <include name="googleClientTest"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="com.biit.appointment.google.client.GoogleClient"/>
+        </classes>
+    </test>
+</suite>
