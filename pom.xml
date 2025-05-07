@@ -5,7 +5,7 @@
 	<artifactId>caldav.google</artifactId>
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Google CalDAV Client</name>
+	<name>Google CalDAV Google Client</name>
 
 	<parent>
 		<groupId>com.biit</groupId>
