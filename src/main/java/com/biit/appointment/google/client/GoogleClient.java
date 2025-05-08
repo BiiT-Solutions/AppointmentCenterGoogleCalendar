@@ -25,7 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -162,6 +165,11 @@ public class GoogleClient {
                 }
             }
         }
+    }
+
+    public List<Event> getEvents(int numberOfEvents, LocalDateTime startingFrom) throws IOException, GeneralSecurityException {
+        return getEvents(PRIMARY_CALENDAR_ID, numberOfEvents,
+                new DateTime(Date.from(startingFrom.atZone(ZoneId.systemDefault()).toInstant())));
     }
 
     public List<Event> getEvents(int numberOfEvents, DateTime startingFrom) throws IOException, GeneralSecurityException {
