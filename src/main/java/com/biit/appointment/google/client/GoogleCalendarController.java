@@ -28,6 +28,8 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
         this.googleClient = googleClient;
         this.eventConverter = eventConverter;
         this.googleCalendarCredentialsConverter = googleCalendarCredentialsConverter;
+
+        GoogleCalDAVLogger.info(this.getClass(), "### Google Calendar Controller initialized");
     }
 
     @Override
