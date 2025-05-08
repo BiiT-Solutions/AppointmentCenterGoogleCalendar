@@ -191,6 +191,29 @@ public class GoogleClient {
         return events.getItems();
     }
 
+    public List<Event> getEvents(LocalDateTime startingFrom, LocalDateTime untilTo) throws IOException, GeneralSecurityException {
+        return getEvents(PRIMARY_CALENDAR_ID, new DateTime(Date.from(startingFrom.atZone(ZoneId.systemDefault()).toInstant())),
+                new DateTime(Date.from(untilTo.atZone(ZoneId.systemDefault()).toInstant())));
+    }
+
+    public List<Event> getEvents(DateTime startingFrom, DateTime untilTo) throws IOException, GeneralSecurityException {
+        return getEvents(PRIMARY_CALENDAR_ID, startingFrom, untilTo);
+    }
+
+    public List<Event> getEvents(String calendarId, DateTime startingFrom, DateTime untilTo) throws IOException, GeneralSecurityException {
+        // Build a new authorized API client service.
+        final Calendar service = getCalendarService();
+
+        // List the next N events from the primary calendar.
+        Events events = service.events().list(calendarId)
+                .setTimeMin(startingFrom)
+                .setTimeMax(untilTo)
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
+                .execute();
+        return events.getItems();
+    }
+
 
     public Event getEvent(String eventId) throws IOException, GeneralSecurityException {
         return getEvent(PRIMARY_CALENDAR_ID, eventId);

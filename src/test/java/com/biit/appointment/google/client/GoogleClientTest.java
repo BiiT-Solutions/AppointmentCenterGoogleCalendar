@@ -14,9 +14,6 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.awaitility.Awaitility.await;
-
 @Test(groups = {"googleClientTest"})
 public class GoogleClientTest {
 
@@ -45,6 +42,17 @@ public class GoogleClientTest {
         AppointmentEventConverter appointmentEventConverter = new AppointmentEventConverter();
         final List<AppointmentDTO> appointmentDTOs = appointmentEventConverter.convertAll(events);
         Assert.assertEquals(appointmentDTOs.size(), NUMBER_OF_EVENTS);
+    }
+
+
+    @Test
+    public void getCalendarEventsInInterval() throws GeneralSecurityException, IOException {
+        final GoogleClient googleClient = new GoogleClient();
+        events = googleClient.getEvents(new DateTime(System.currentTimeMillis()), new DateTime(System.currentTimeMillis()
+                //Two days.
+                + 2 * 24 * 60 * 60 * 1000));
+        googleClient.logEvents(events);
+        Assert.assertEquals(events.size(), 2);
     }
 
 
