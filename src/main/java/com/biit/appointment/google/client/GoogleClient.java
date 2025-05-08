@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -73,13 +74,13 @@ public class GoogleClient {
     @Value("${google.receiver.port:" + DEFAULT_RECEIVER_PORT + "}")
     private Integer receiverPort;
 
-    @Value("${google.client.id}")
+    @Value("${google.client.id:}")
     private String clientId;
 
-    @Value("${google.client.secret}")
+    @Value("${google.client.secret:}")
     private String clientSecret;
 
-    @Value("${google.project.id}")
+    @Value("${google.project.id:}")
     private String projectId;
 
     @Value("${google.redirect.urls:}")
@@ -109,12 +110,14 @@ public class GoogleClient {
      * @return An authorized Credential object.
      */
     private GoogleClientSecrets getCredentialsFromProperties() {
-
-        final GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
-        clientSecrets.setInstalled(new GoogleClientSecrets.Details().setClientId(clientId).setClientSecret(clientSecret)
-                .setAuthUri(AUTH_URI).setTokenUri(TOKEN_URI).set(PROJECT_ID_FIELD, projectId).set(AUTH_PROVIDER_FIELD, AUTH_PROVIDER_URI)
-                .setRedirectUris(redirectUrls));
-        return clientSecrets;
+        if (clientId != null && !clientId.isEmpty()) {
+            final GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
+            clientSecrets.setInstalled(new GoogleClientSecrets.Details().setClientId(clientId).setClientSecret(clientSecret)
+                    .setAuthUri(AUTH_URI).setTokenUri(TOKEN_URI).set(PROJECT_ID_FIELD, projectId).set(AUTH_PROVIDER_FIELD, AUTH_PROVIDER_URI)
+                    .setRedirectUris(redirectUrls));
+            return clientSecrets;
+        }
+        return null;
     }
 
     /**
@@ -143,15 +146,18 @@ public class GoogleClient {
             clientSecrets = getCredentialsFromResources();
         }
 
-        // Build flow and trigger user authorization request.
-        final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                netHttpTransport, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
-                .build();
-        final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(receiverPort != null ? receiverPort : DEFAULT_RECEIVER_PORT).build();
-        //returns an authorized Credential object.
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userId);
+        if (clientSecrets != null) {
+            // Build flow and trigger user authorization request.
+            final GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                    netHttpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                    .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                    .setAccessType("offline")
+                    .build();
+            final LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(receiverPort != null ? receiverPort : DEFAULT_RECEIVER_PORT).build();
+            //returns an authorized Credential object.
+            return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userId);
+        }
+        return null;
     }
 
 
@@ -184,7 +190,7 @@ public class GoogleClient {
 
 
     private Calendar getCalendarService(Credential credentials) throws IOException, GeneralSecurityException {
-        if (calendarService == null) {
+        if (calendarService == null && credentials != null) {
             final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
             calendarService = new Calendar.Builder(netHttpTransport, JSON_FACTORY, credentials)
                     .setApplicationName(APPLICATION_NAME)
@@ -228,6 +234,11 @@ public class GoogleClient {
         // Build a new authorized API client service.
         final Calendar service = getCalendarService(credential);
 
+        if (service == null) {
+            GoogleCalDAVLogger.warning(this.getClass(), "Google Calendar service is not correctly configured!");
+            return new ArrayList<>();
+        }
+
         // List the next N events from the primary calendar.
         final Events events = service.events().list(calendarId)
                 .setMaxResults(numberOfEvents)
@@ -253,6 +264,10 @@ public class GoogleClient {
             throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final Calendar service = getCalendarService(credential);
+        if (service == null) {
+            GoogleCalDAVLogger.warning(this.getClass(), "Google Calendar service is not correctly configured!");
+            return new ArrayList<>();
+        }
 
         // List the next N events from the primary calendar.
         final Events events = service.events().list(calendarId)
@@ -273,6 +288,10 @@ public class GoogleClient {
     public Event getEvent(String calendarId, String eventId, Credential credential) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
         final Calendar service = getCalendarService(credential);
+        if (service == null) {
+            GoogleCalDAVLogger.warning(this.getClass(), "Google Calendar service is not correctly configured!");
+            return null;
+        }
 
         // List the next N events from the primary calendar.
         return service.events().get(calendarId, eventId).execute();
@@ -294,6 +313,11 @@ public class GoogleClient {
      */
     public String createCalendarEvent(String calendarId, Event event, Credential credential) throws GeneralSecurityException, IOException {
         final Calendar service = getCalendarService(credential);
+
+        if (service == null) {
+            GoogleCalDAVLogger.warning(this.getClass(), "Google Calendar service is not correctly configured!");
+            return null;
+        }
 
         if (GoogleCalDAVLogger.isDebugEnabled()) {
             GoogleCalDAVLogger.debug(this.getClass(), "Creating event:\n{}", JSON_FACTORY.toPrettyString(event));
@@ -319,6 +343,11 @@ public class GoogleClient {
      */
     public void deleteCalendarEvent(String calendarId, String eventId, Credential credential) throws GeneralSecurityException, IOException {
         final Calendar service = getCalendarService(credential);
+        if (service == null) {
+            GoogleCalDAVLogger.warning(this.getClass(), "Google Calendar service is not correctly configured!");
+            return;
+        }
+
         final Event event = service.events().get(calendarId, eventId).execute();
 
         if (event != null) {

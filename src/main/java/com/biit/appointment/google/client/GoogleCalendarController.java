@@ -42,7 +42,8 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
     public List<AppointmentDTO> getEvents(LocalDateTime startingFrom, LocalDateTime endingTo, ExternalCalendarCredentialsDTO credentials)
             throws ExternalCalendarActionException, ExternalCalendarNotFoundException {
         try {
-            return eventConverter.convertAll(googleClient.getEvents(startingFrom, endingTo, null));
+            return eventConverter.convertAll(googleClient.getEvents(startingFrom, endingTo,
+                    googleCalendarCredentialsConverter.reverse(credentials)));
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
             throw new ExternalCalendarActionException(this.getClass(), e);
