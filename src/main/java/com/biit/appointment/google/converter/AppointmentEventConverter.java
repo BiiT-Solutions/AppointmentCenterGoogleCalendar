@@ -66,7 +66,8 @@ public class AppointmentEventConverter {
         event.setDescription(from.getDescription());
 
         if (from.isAllDay()) {
-            final DateTime startingTime = new DateTime(true, from.getStartTime().toLocalDate().atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond() * 1000, null);
+            final DateTime startingTime = new DateTime(true, from.getStartTime().toLocalDate()
+                    .atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond() * 1000, null);
             final EventDateTime startDateTime = new EventDateTime().setDate(startingTime);
             event.setStart(startDateTime);
             event.setEnd(startDateTime);

@@ -2,7 +2,7 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
 <suite thread-count="1" verbose="1" name="Infographic Engine v2">
     <listeners>
-        <listener class-name="com.biit.appointment.google.logger.TestLogging"/>
+        <listener class-name="com.biit.appointment.google.TestListener"/>
     </listeners>
 
     <test name="Google CalDAV" enabled="true" preserve-order="true">

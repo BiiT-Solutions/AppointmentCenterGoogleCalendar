@@ -23,7 +23,8 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
     private final AppointmentEventConverter eventConverter;
     private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
 
-    public GoogleCalendarController(GoogleClient googleClient, AppointmentEventConverter eventConverter, ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter) {
+    public GoogleCalendarController(GoogleClient googleClient, AppointmentEventConverter eventConverter,
+                                    ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter) {
         this.googleClient = googleClient;
         this.eventConverter = eventConverter;
         this.externalCalendarCredentialsConverter = externalCalendarCredentialsConverter;
