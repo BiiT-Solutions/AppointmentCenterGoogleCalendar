@@ -2,9 +2,13 @@ package com.biit.appointment.google.client;
 
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.google.converter.AppointmentEventConverter;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import org.testng.Assert;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -24,14 +28,23 @@ public class GoogleClientTest {
 
     private List<Event> events;
 
+    private Credential credential;
+
     private Callable<Boolean> eventIsDeleted(GoogleClient googleClient, String eventId) {
-        return () -> googleClient.getEvent(eventId) == null;
+        return () -> googleClient.getEvent(eventId, credential) == null;
+    }
+
+    @BeforeClass
+    public void getCredentials() throws IOException, GeneralSecurityException, IOException {
+        final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        final GoogleClient googleClient = new GoogleClient();
+        credential = googleClient.getCredentials(netHttpTransport);
     }
 
     @Test
     public void getCalendarEvents() throws GeneralSecurityException, IOException {
         final GoogleClient googleClient = new GoogleClient();
-        events = googleClient.getEvents(NUMBER_OF_EVENTS, new DateTime(System.currentTimeMillis()));
+        events = googleClient.getEvents(NUMBER_OF_EVENTS, new DateTime(System.currentTimeMillis()), credential);
         googleClient.logEvents(events);
         Assert.assertEquals(events.size(), NUMBER_OF_EVENTS);
     }
@@ -45,18 +58,18 @@ public class GoogleClientTest {
     }
 
 
-    @Test
+    @Test(dependsOnMethods = "convertEvents")
     public void getCalendarEventsInInterval() throws GeneralSecurityException, IOException {
         final GoogleClient googleClient = new GoogleClient();
         events = googleClient.getEvents(new DateTime(System.currentTimeMillis()), new DateTime(System.currentTimeMillis()
                 //Two days.
-                + 2 * 24 * 60 * 60 * 1000));
+                + 2 * 24 * 60 * 60 * 1000), credential);
         googleClient.logEvents(events);
         Assert.assertEquals(events.size(), 2);
     }
 
 
-    @Test
+    @Test(dependsOnMethods = "convertEvents")
     public void createEvent() throws GeneralSecurityException, IOException {
         AppointmentDTO appointmentDTO = new AppointmentDTO();
         appointmentDTO.setTitle(APPOINTMENT_TITLE);
@@ -70,10 +83,10 @@ public class GoogleClientTest {
 
         final GoogleClient googleClient = new GoogleClient();
         AppointmentEventConverter appointmentEventConverter = new AppointmentEventConverter();
-        String eventId = googleClient.createCalendarEvent(appointmentEventConverter.reverse(appointmentDTO));
+        String eventId = googleClient.createCalendarEvent(appointmentEventConverter.reverse(appointmentDTO), credential);
         Assert.assertNotNull(eventId);
 
-        Event event = googleClient.getEvent(eventId);
+        Event event = googleClient.getEvent(eventId, credential);
         Assert.assertNotNull(event);
         Assert.assertNotEquals(event.getStatus(), "cancelled");
         Assert.assertEquals(event.getId(), eventId);
@@ -82,13 +95,13 @@ public class GoogleClientTest {
         Assert.assertEquals(event.getStart().getDateTime().getValue(), startTime.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond() * 1000);
         Assert.assertEquals(event.getEnd().getDateTime().getValue(), endTime.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond() * 1000);
 
-        googleClient.deleteCalendarEvent(eventId);
-        Event cancelledEvent = googleClient.getEvent(eventId);
+        googleClient.deleteCalendarEvent(eventId, credential);
+        Event cancelledEvent = googleClient.getEvent(eventId, credential);
         Assert.assertEquals(cancelledEvent.getStatus(), "cancelled");
     }
 
 
-    @Test
+    @Test(dependsOnMethods = "convertEvents")
     public void createAllDayEvent() throws GeneralSecurityException, IOException {
         AppointmentDTO appointmentDTO = new AppointmentDTO();
         appointmentDTO.setTitle(APPOINTMENT_TITLE);
@@ -103,10 +116,10 @@ public class GoogleClientTest {
 
         final GoogleClient googleClient = new GoogleClient();
         AppointmentEventConverter appointmentEventConverter = new AppointmentEventConverter();
-        String eventId = googleClient.createCalendarEvent(appointmentEventConverter.reverse(appointmentDTO));
+        String eventId = googleClient.createCalendarEvent(appointmentEventConverter.reverse(appointmentDTO), credential);
         Assert.assertNotNull(eventId);
 
-        Event event = googleClient.getEvent(eventId);
+        Event event = googleClient.getEvent(eventId, credential);
         Assert.assertNotNull(event);
         Assert.assertNotEquals(event.getStatus(), "cancelled");
         Assert.assertEquals(event.getId(), eventId);
@@ -116,8 +129,8 @@ public class GoogleClientTest {
         Assert.assertEquals(event.getEnd().getDate().getValue(), endTime.toLocalDate().atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond() * 1000);
 
 
-        googleClient.deleteCalendarEvent(eventId);
-        Event cancelledEvent = googleClient.getEvent(eventId);
+        googleClient.deleteCalendarEvent(eventId, credential);
+        Event cancelledEvent = googleClient.getEvent(eventId, credential);
         Assert.assertEquals(cancelledEvent.getStatus(), "cancelled");
     }
 }

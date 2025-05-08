@@ -1,6 +1,8 @@
 package com.biit.appointment.google.client;
 
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
+import com.google.api.client.auth.oauth2.BearerToken;
+import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -10,6 +12,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.Clock;
 import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
@@ -35,6 +38,7 @@ import java.util.List;
 public class GoogleClient {
 
     private static final int DEFAULT_RECEIVER_PORT = 8888;
+    private static final String DEFAULT_USER_ID = "user";
 
     private static final String AUTH_URI = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URI = "https://oauth2.googleapis.com/token";
@@ -77,7 +81,7 @@ public class GoogleClient {
     @Value("${google.project.id}")
     private String projectId;
 
-    @Value("#{${google.redirect.urls:'http://localhost'}}")
+    @Value("${google.redirect.urls:}")
     private List<String> redirectUrls;
 
     private Calendar calendarService;
@@ -119,7 +123,18 @@ public class GoogleClient {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    private Credential getCredentials(final NetHttpTransport netHttpTransport) throws IOException {
+    public Credential getCredentials(final NetHttpTransport netHttpTransport) throws IOException {
+        return getCredentials(DEFAULT_USER_ID, netHttpTransport);
+    }
+
+    /**
+     * Creates an authorized Credential object.
+     *
+     * @param netHttpTransport The network HTTP Transport.
+     * @return An authorized Credential object.
+     * @throws IOException If the credentials.json file cannot be found.
+     */
+    public Credential getCredentials(String userId, final NetHttpTransport netHttpTransport) throws IOException {
         final GoogleClientSecrets clientSecrets;
         if (clientSecret != null) {
             clientSecrets = getCredentialsFromProperties();
@@ -135,14 +150,42 @@ public class GoogleClient {
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(receiverPort != null ? receiverPort : DEFAULT_RECEIVER_PORT).build();
         //returns an authorized Credential object.
-        return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
+        return new AuthorizationCodeInstalledApp(flow, receiver).authorize(userId);
+    }
+
+
+    public Credential getCredentials(CredentialData credentialData) throws IOException, GeneralSecurityException {
+        final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        Credential credential = (new Credential.Builder(BearerToken.authorizationHeaderAccessMethod()))
+                .setTransport(netHttpTransport)
+                .setJsonFactory(JSON_FACTORY)
+                .setTokenServerEncodedUrl(TOKEN_URI)
+                .setClientAuthentication(new ClientParametersAuthentication(credentialData.getUserId().toString(),
+                        this.clientSecret))
+                .setClock(Clock.SYSTEM).build();
+
+
+        credential.setAccessToken(credentialData.getAccessToken());
+        credential.setRefreshToken(credentialData.getRefreshToken());
+        credential.setExpirationTimeMilliseconds(credentialData.getExpirationTimeMilliseconds());
+
+        return credential;
     }
 
 
     private Calendar getCalendarService() throws IOException, GeneralSecurityException {
+        if (calendarService != null) {
+            return calendarService;
+        }
+        final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        return getCalendarService(getCredentials(netHttpTransport));
+    }
+
+
+    private Calendar getCalendarService(Credential credentials) throws IOException, GeneralSecurityException {
         if (calendarService == null) {
             final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            calendarService = new Calendar.Builder(netHttpTransport, JSON_FACTORY, getCredentials(netHttpTransport))
+            calendarService = new Calendar.Builder(netHttpTransport, JSON_FACTORY, credentials)
                     .setApplicationName(APPLICATION_NAME)
                     .build();
         }
@@ -167,19 +210,20 @@ public class GoogleClient {
         }
     }
 
-    public List<Event> getEvents(int numberOfEvents, LocalDateTime startingFrom) throws IOException, GeneralSecurityException {
+    public List<Event> getEvents(int numberOfEvents, LocalDateTime startingFrom, Credential credential) throws IOException, GeneralSecurityException {
         return getEvents(PRIMARY_CALENDAR_ID, numberOfEvents,
-                new DateTime(Date.from(startingFrom.atZone(ZoneId.systemDefault()).toInstant())));
+                new DateTime(Date.from(startingFrom.atZone(ZoneId.systemDefault()).toInstant())),
+                credential);
     }
 
-    public List<Event> getEvents(int numberOfEvents, DateTime startingFrom) throws IOException, GeneralSecurityException {
-        return getEvents(PRIMARY_CALENDAR_ID, numberOfEvents, startingFrom);
+    public List<Event> getEvents(int numberOfEvents, DateTime startingFrom, Credential credential) throws IOException, GeneralSecurityException {
+        return getEvents(PRIMARY_CALENDAR_ID, numberOfEvents, startingFrom, credential);
     }
 
 
-    public List<Event> getEvents(String calendarId, int numberOfEvents, DateTime startingFrom) throws IOException, GeneralSecurityException {
+    public List<Event> getEvents(String calendarId, int numberOfEvents, DateTime startingFrom, Credential credential) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
-        final Calendar service = getCalendarService();
+        final Calendar service = getCalendarService(credential);
 
         // List the next N events from the primary calendar.
         Events events = service.events().list(calendarId)
@@ -191,18 +235,19 @@ public class GoogleClient {
         return events.getItems();
     }
 
-    public List<Event> getEvents(LocalDateTime startingFrom, LocalDateTime untilTo) throws IOException, GeneralSecurityException {
+    public List<Event> getEvents(LocalDateTime startingFrom, LocalDateTime untilTo, Credential credential) throws IOException, GeneralSecurityException {
         return getEvents(PRIMARY_CALENDAR_ID, new DateTime(Date.from(startingFrom.atZone(ZoneId.systemDefault()).toInstant())),
-                new DateTime(Date.from(untilTo.atZone(ZoneId.systemDefault()).toInstant())));
+                new DateTime(Date.from(untilTo.atZone(ZoneId.systemDefault()).toInstant())),
+                credential);
     }
 
-    public List<Event> getEvents(DateTime startingFrom, DateTime untilTo) throws IOException, GeneralSecurityException {
-        return getEvents(PRIMARY_CALENDAR_ID, startingFrom, untilTo);
+    public List<Event> getEvents(DateTime startingFrom, DateTime untilTo, Credential credential) throws IOException, GeneralSecurityException {
+        return getEvents(PRIMARY_CALENDAR_ID, startingFrom, untilTo, credential);
     }
 
-    public List<Event> getEvents(String calendarId, DateTime startingFrom, DateTime untilTo) throws IOException, GeneralSecurityException {
+    public List<Event> getEvents(String calendarId, DateTime startingFrom, DateTime untilTo, Credential credential) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
-        final Calendar service = getCalendarService();
+        final Calendar service = getCalendarService(credential);
 
         // List the next N events from the primary calendar.
         Events events = service.events().list(calendarId)
@@ -215,22 +260,22 @@ public class GoogleClient {
     }
 
 
-    public Event getEvent(String eventId) throws IOException, GeneralSecurityException {
-        return getEvent(PRIMARY_CALENDAR_ID, eventId);
+    public Event getEvent(String eventId, Credential credential) throws IOException, GeneralSecurityException {
+        return getEvent(PRIMARY_CALENDAR_ID, eventId, credential);
     }
 
 
-    public Event getEvent(String calendarId, String eventId) throws IOException, GeneralSecurityException {
+    public Event getEvent(String calendarId, String eventId, Credential credential) throws IOException, GeneralSecurityException {
         // Build a new authorized API client service.
-        final Calendar service = getCalendarService();
+        final Calendar service = getCalendarService(credential);
 
         // List the next N events from the primary calendar.
         return service.events().get(calendarId, eventId).execute();
     }
 
 
-    public String createCalendarEvent(Event event) throws IOException, GeneralSecurityException {
-        return createCalendarEvent(PRIMARY_CALENDAR_ID, event);
+    public String createCalendarEvent(Event event, Credential credential) throws IOException, GeneralSecurityException {
+        return createCalendarEvent(PRIMARY_CALENDAR_ID, event, credential);
     }
 
     /**
@@ -242,8 +287,8 @@ public class GoogleClient {
      * @throws GeneralSecurityException If security credentials cannot be established.
      * @throws IOException              If an error occurs while communicating with the Google Calendar API.
      */
-    public String createCalendarEvent(String calendarId, Event event) throws GeneralSecurityException, IOException {
-        final Calendar service = getCalendarService();
+    public String createCalendarEvent(String calendarId, Event event, Credential credential) throws GeneralSecurityException, IOException {
+        final Calendar service = getCalendarService(credential);
 
         if (GoogleCalDAVLogger.isDebugEnabled()) {
             GoogleCalDAVLogger.debug(this.getClass(), "Creating event:\n{}", JSON_FACTORY.toPrettyString(event));
@@ -254,8 +299,8 @@ public class GoogleClient {
         return event.getId();
     }
 
-    public void deleteCalendarEvent(String eventId) throws GeneralSecurityException, IOException {
-        deleteCalendarEvent(PRIMARY_CALENDAR_ID, eventId);
+    public void deleteCalendarEvent(String eventId, Credential credential) throws GeneralSecurityException, IOException {
+        deleteCalendarEvent(PRIMARY_CALENDAR_ID, eventId, credential);
     }
 
 
@@ -267,8 +312,8 @@ public class GoogleClient {
      * @throws GeneralSecurityException
      * @throws IOException
      */
-    public void deleteCalendarEvent(String calendarId, String eventId) throws GeneralSecurityException, IOException {
-        final Calendar service = getCalendarService();
+    public void deleteCalendarEvent(String calendarId, String eventId, Credential credential) throws GeneralSecurityException, IOException {
+        final Calendar service = getCalendarService(credential);
         Event event = service.events().get(calendarId, eventId).execute();
 
         if (event != null) {
