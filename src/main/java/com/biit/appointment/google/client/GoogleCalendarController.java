@@ -7,7 +7,7 @@ import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.core.providers.IExternalCalendarProvider;
 import com.biit.appointment.google.converter.AppointmentEventConverter;
-import com.biit.appointment.google.converter.ExternalCalendarCredentialsConverter;
+import com.biit.appointment.google.converter.GoogleCalendarCredentialsConverter;
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
 import org.springframework.stereotype.Controller;
 
@@ -21,13 +21,13 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
 
     private final GoogleClient googleClient;
     private final AppointmentEventConverter eventConverter;
-    private final ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
+    private final GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter;
 
     public GoogleCalendarController(GoogleClient googleClient, AppointmentEventConverter eventConverter,
-                                    ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter) {
+                                    GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter) {
         this.googleClient = googleClient;
         this.eventConverter = eventConverter;
-        this.externalCalendarCredentialsConverter = externalCalendarCredentialsConverter;
+        this.googleCalendarCredentialsConverter = googleCalendarCredentialsConverter;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
             throws ExternalCalendarActionException, ExternalCalendarNotFoundException {
         try {
             return eventConverter.convertAll(googleClient.getEvents(numberOfEvents, startingFrom,
-                    externalCalendarCredentialsConverter.reverse(credentials)));
+                    googleCalendarCredentialsConverter.reverse(credentials)));
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
             throw new ExternalCalendarActionException(this.getClass(), e);
@@ -65,7 +65,7 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
             throws ExternalCalendarActionException, ExternalCalendarNotFoundException {
         try {
             return eventConverter.convert(googleClient.getEvent(externalReference,
-                    externalCalendarCredentialsConverter.reverse(credentials)));
+                    googleCalendarCredentialsConverter.reverse(credentials)));
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
             throw new ExternalCalendarActionException(this.getClass(), e);
@@ -83,7 +83,7 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
             throws ExternalCalendarActionException, ExternalCalendarNotFoundException {
         try {
             return googleClient.createCalendarEvent(eventConverter.reverse(appointmentDTO),
-                    externalCalendarCredentialsConverter.reverse(credentials));
+                    googleCalendarCredentialsConverter.reverse(credentials));
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
             throw new ExternalCalendarActionException(this.getClass(), e);
@@ -95,7 +95,7 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
             throws ExternalCalendarActionException, ExternalCalendarNotFoundException {
         try {
             googleClient.deleteCalendarEvent(appointmentDTO.getExternalReference(),
-                    externalCalendarCredentialsConverter.reverse(credentials));
+                    googleCalendarCredentialsConverter.reverse(credentials));
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
             throw new ExternalCalendarActionException(this.getClass(), e);

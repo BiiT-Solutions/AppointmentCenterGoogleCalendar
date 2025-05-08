@@ -1,7 +1,7 @@
 package com.biit.appointment.google.client;
 
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
-import com.biit.appointment.google.converter.ExternalCalendarCredentialsConverter;
+import com.biit.appointment.google.converter.GoogleCalendarCredentialsConverter;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -28,11 +28,11 @@ public class CredentialsTest extends AbstractTestNGSpringContextTests {
     private Credential credential;
 
     @Autowired
-    private ExternalCalendarCredentialsConverter externalCalendarCredentialsConverter;
+    private GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter;
 
     @BeforeClass
     public void checkBeans() {
-        Assert.assertNotNull(externalCalendarCredentialsConverter);
+        Assert.assertNotNull(googleCalendarCredentialsConverter);
     }
 
     @BeforeClass
@@ -52,8 +52,8 @@ public class CredentialsTest extends AbstractTestNGSpringContextTests {
 
     @Test
     public void convertCredentials() throws GeneralSecurityException, IOException {
-        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = externalCalendarCredentialsConverter.convertElement(userId, credential);
-        Credential storedCredentials = externalCalendarCredentialsConverter.reverse(externalCalendarCredentialsDTO);
+        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarCredentialsConverter.convertElement(userId, credential);
+        Credential storedCredentials = googleCalendarCredentialsConverter.reverse(externalCalendarCredentialsDTO);
 
         final GoogleClient googleClient = new GoogleClient();
         List<Event> events = googleClient.getEvents(1, new DateTime(System.currentTimeMillis()), storedCredentials);

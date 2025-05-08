@@ -12,11 +12,11 @@ import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 @Component
-public class ExternalCalendarCredentialsConverter {
+public class GoogleCalendarCredentialsConverter {
 
     private final GoogleClient googleClient;
 
-    public ExternalCalendarCredentialsConverter(GoogleClient googleClient) {
+    public GoogleCalendarCredentialsConverter(GoogleClient googleClient) {
         this.googleClient = googleClient;
     }
 
