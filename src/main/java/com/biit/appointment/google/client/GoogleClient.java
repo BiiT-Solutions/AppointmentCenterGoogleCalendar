@@ -19,6 +19,7 @@ import com.google.api.services.calendar.model.Events;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,13 @@ import java.util.List;
 @Component
 public class GoogleClient {
 
-    private static final int DEFAULT_RECEIVER_PORT = 88888;
+    private static final int DEFAULT_RECEIVER_PORT = 8888;
+
+    private static final String AUTH_URI = "https://accounts.google.com/o/oauth2/auth";
+    private static final String TOKEN_URI = "https://oauth2.googleapis.com/token";
+    private static final String AUTH_PROVIDER_FIELD = "auth_provider_x509_cert_url";
+    private static final String AUTH_PROVIDER_URI = "https://www.googleapis.com/oauth2/v1/certs";
+    private static final String PROJECT_ID_FIELD = "project_id";
 
     /**
      * Application name.
@@ -48,17 +55,57 @@ public class GoogleClient {
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
     /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved tokens/ folder.
+     * CalendarScopes.CALENDAR_READONLY if only can read.
      */
-    private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR_READONLY);
-    private static final String CREDENTIALS_FILE_PATH = "/client_secret.json";
+    private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
+    private static final String CREDENTIALS_FILE_PATH = "client_secret.json";
 
     private static final String PRIMARY_CALENDAR_ID = "primary";
 
     @Value("${google.receiver.port:" + DEFAULT_RECEIVER_PORT + "}")
     private Integer receiverPort;
 
+    @Value("${google.client.id}")
+    private String clientId;
+
+    @Value("${google.client.secret}")
+    private String clientSecret;
+
+    @Value("${google.project.id}")
+    private String projectId;
+
+    @Value("#{${google.redirect.urls:'http://localhost'}}")
+    private List<String> redirectUrls;
+
+
+    /**
+     * Creates an authorized Credential object.
+     *
+     * @return An authorized Credential object.
+     * @throws IOException If the credentials.json file cannot be found.
+     */
+    private GoogleClientSecrets getCredentialsFromResources() throws IOException {
+        // Load client secrets.
+        InputStream in = GoogleClient.class.getResourceAsStream(File.separator + CREDENTIALS_FILE_PATH);
+        if (in == null) {
+            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+        }
+        return GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+    }
+
+    /**
+     * Creates an authorized Credential object.
+     *
+     * @return An authorized Credential object.
+     */
+    private GoogleClientSecrets getCredentialsFromProperties() {
+
+        final GoogleClientSecrets clientSecrets = new GoogleClientSecrets();
+        clientSecrets.setInstalled(new GoogleClientSecrets.Details().setClientId(clientId).setClientSecret(clientSecret)
+                .setAuthUri(AUTH_URI).setTokenUri(TOKEN_URI).set(PROJECT_ID_FIELD, projectId).set(AUTH_PROVIDER_FIELD, AUTH_PROVIDER_URI)
+                .setRedirectUris(redirectUrls));
+        return clientSecrets;
+    }
 
     /**
      * Creates an authorized Credential object.
@@ -67,15 +114,13 @@ public class GoogleClient {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    private Credential getCredentials(final NetHttpTransport netHttpTransport)
-            throws IOException {
-        // Load client secrets.
-        InputStream in = GoogleClient.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
-            throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
+    private Credential getCredentials(final NetHttpTransport netHttpTransport) throws IOException {
+        final GoogleClientSecrets clientSecrets;
+        if (clientSecret != null) {
+            clientSecrets = getCredentialsFromProperties();
+        } else {
+            clientSecrets = getCredentialsFromResources();
         }
-        GoogleClientSecrets clientSecrets =
-                GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
@@ -98,16 +143,18 @@ public class GoogleClient {
 
 
     public void logEvents(List<Event> events) {
-        if (events.isEmpty()) {
-            GoogleCalDAVLogger.info(this.getClass(), "No upcoming events found.");
-        } else {
-            GoogleCalDAVLogger.info(this.getClass(), "Upcoming events:");
-            for (Event event : events) {
-                DateTime start = event.getStart().getDateTime();
-                if (start == null) {
-                    start = event.getStart().getDate();
+        if (GoogleCalDAVLogger.isDebugEnabled()) {
+            if (events.isEmpty()) {
+                GoogleCalDAVLogger.info(this.getClass(), "No upcoming events found.");
+            } else {
+                GoogleCalDAVLogger.info(this.getClass(), "Upcoming events:");
+                for (Event event : events) {
+                    DateTime start = event.getStart().getDateTime();
+                    if (start == null) {
+                        start = event.getStart().getDate();
+                    }
+                    GoogleCalDAVLogger.debug(this.getClass(), "{} ({})", event.getSummary(), start);
                 }
-                GoogleCalDAVLogger.info(this.getClass(), "{} ({})", event.getSummary(), start);
             }
         }
     }
@@ -131,6 +178,25 @@ public class GoogleClient {
         return events.getItems();
     }
 
+
+    public Event getEvent(String eventId) throws IOException, GeneralSecurityException {
+        return getEvent(PRIMARY_CALENDAR_ID, eventId);
+    }
+
+
+    public Event getEvent(String calendarId, String eventId) throws IOException, GeneralSecurityException {
+        // Build a new authorized API client service.
+        final Calendar service = getCalendarService();
+
+        // List the next N events from the primary calendar.
+        return service.events().get(calendarId, eventId).execute();
+    }
+
+
+    public String createCalendarEvent(Event event) throws IOException, GeneralSecurityException {
+        return createCalendarEvent(PRIMARY_CALENDAR_ID, event);
+    }
+
     /**
      * Creates a new event on the Google Calendar.
      *
@@ -143,6 +209,9 @@ public class GoogleClient {
     public String createCalendarEvent(String calendarId, Event event) throws GeneralSecurityException, IOException {
         final Calendar service = getCalendarService();
 
+        if (GoogleCalDAVLogger.isDebugEnabled()) {
+            GoogleCalDAVLogger.debug(this.getClass(), "Creating event:\n{}", JSON_FACTORY.toPrettyString(event));
+        }
         event = service.events().insert(calendarId, event).setSendNotifications(true).setConferenceDataVersion(1)
                 .execute();
         GoogleCalDAVLogger.info(this.getClass(), "Event created: {}", event.getHtmlLink());

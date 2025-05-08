@@ -62,19 +62,16 @@ public class AppointmentEventConverter {
         event.setDescription(from.getDescription());
 
         if (from.isAllDay()) {
-            final DateTime startingTime = new DateTime(Date.from(from.getStartTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            final EventDateTime startDateTime = new EventDateTime().setDate(startingTime).setTimeZone(ZoneId.systemDefault().toString());
+            final DateTime startingTime = new DateTime(true, from.getStartTime().toLocalDate().atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond()*1000, null);
+            final EventDateTime startDateTime = new EventDateTime().setDate(startingTime);
             event.setStart(startDateTime);
-
-            final DateTime endingTime = new DateTime(Date.from(from.getEndTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-            final EventDateTime endingDatTime = new EventDateTime().setDate(endingTime).setTimeZone(ZoneId.systemDefault().toString());
-            event.setEnd(endingDatTime);
+            event.setEnd(startDateTime);
         } else {
-            final DateTime startingTime = new DateTime(Date.from(from.getStartTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            final DateTime startingTime = new DateTime(Date.from(from.getStartTime().atZone(ZoneId.systemDefault()).toInstant()));
             final EventDateTime startDateTime = new EventDateTime().setDateTime(startingTime).setTimeZone(ZoneId.systemDefault().toString());
             event.setStart(startDateTime);
 
-            final DateTime endingTime = new DateTime(Date.from(from.getEndTime().toLocalDate().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+            final DateTime endingTime = new DateTime(Date.from(from.getEndTime().atZone(ZoneId.systemDefault()).toInstant()));
             final EventDateTime endingDateTime = new EventDateTime().setDateTime(endingTime).setTimeZone(ZoneId.systemDefault().toString());
             event.setEnd(endingDateTime);
         }
