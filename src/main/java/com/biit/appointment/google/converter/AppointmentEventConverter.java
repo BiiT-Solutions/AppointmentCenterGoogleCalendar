@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class AppointmentEventConverter {
+
+    public static final String DELETED_STATUS = "cancelled";
 
     protected AppointmentDTO convertElement(Event from) {
         if (from == null) {
@@ -43,6 +46,7 @@ public class AppointmentEventConverter {
         }
 
         appointmentDTO.setExternalReference(from.getId());
+        appointmentDTO.setDeleted(Objects.equals(from.getStatus(), DELETED_STATUS));
         return appointmentDTO;
     }
 
@@ -62,7 +66,7 @@ public class AppointmentEventConverter {
         event.setDescription(from.getDescription());
 
         if (from.isAllDay()) {
-            final DateTime startingTime = new DateTime(true, from.getStartTime().toLocalDate().atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond()*1000, null);
+            final DateTime startingTime = new DateTime(true, from.getStartTime().toLocalDate().atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond() * 1000, null);
             final EventDateTime startDateTime = new EventDateTime().setDate(startingTime);
             event.setStart(startDateTime);
             event.setEnd(startDateTime);
@@ -76,6 +80,9 @@ public class AppointmentEventConverter {
             event.setEnd(endingDateTime);
         }
 
+        if (from.isDeleted()) {
+            event.setStatus(DELETED_STATUS);
+        }
         return event;
     }
 

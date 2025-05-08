@@ -12,6 +12,10 @@ import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.concurrent.Callable;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.awaitility.Awaitility.await;
 
 @Test(groups = {"googleClientTest"})
 public class GoogleClientTest {
@@ -22,6 +26,10 @@ public class GoogleClientTest {
     private static final int NUMBER_OF_EVENTS = 10;
 
     private List<Event> events;
+
+    private Callable<Boolean> eventIsDeleted(GoogleClient googleClient, String eventId) {
+        return () -> googleClient.getEvent(eventId) == null;
+    }
 
     @Test
     public void getCalendarEvents() throws GeneralSecurityException, IOException {
@@ -59,12 +67,18 @@ public class GoogleClientTest {
 
         Event event = googleClient.getEvent(eventId);
         Assert.assertNotNull(event);
+        Assert.assertNotEquals(event.getStatus(), "cancelled");
         Assert.assertEquals(event.getId(), eventId);
         Assert.assertEquals(event.getSummary(), APPOINTMENT_TITLE);
         Assert.assertEquals(event.getDescription(), APPOINTMENT_DESCRIPTION);
         Assert.assertEquals(event.getStart().getDateTime().getValue(), startTime.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond() * 1000);
         Assert.assertEquals(event.getEnd().getDateTime().getValue(), endTime.atZone(ZoneId.systemDefault()).toInstant().getEpochSecond() * 1000);
+
+        googleClient.deleteCalendarEvent(eventId);
+        Event cancelledEvent = googleClient.getEvent(eventId);
+        Assert.assertEquals(cancelledEvent.getStatus(), "cancelled");
     }
+
 
     @Test
     public void createAllDayEvent() throws GeneralSecurityException, IOException {
@@ -86,10 +100,16 @@ public class GoogleClientTest {
 
         Event event = googleClient.getEvent(eventId);
         Assert.assertNotNull(event);
+        Assert.assertNotEquals(event.getStatus(), "cancelled");
         Assert.assertEquals(event.getId(), eventId);
         Assert.assertEquals(event.getSummary(), APPOINTMENT_TITLE);
         Assert.assertEquals(event.getDescription(), APPOINTMENT_DESCRIPTION);
         Assert.assertEquals(event.getStart().getDate().getValue(), startTime.toLocalDate().atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond() * 1000);
         Assert.assertEquals(event.getEnd().getDate().getValue(), endTime.toLocalDate().atStartOfDay(ZoneId.of("UTC")).toInstant().getEpochSecond() * 1000);
+
+
+        googleClient.deleteCalendarEvent(eventId);
+        Event cancelledEvent = googleClient.getEvent(eventId);
+        Assert.assertEquals(cancelledEvent.getStatus(), "cancelled");
     }
 }

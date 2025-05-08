@@ -77,6 +77,8 @@ public class GoogleClient {
     @Value("#{${google.redirect.urls:'http://localhost'}}")
     private List<String> redirectUrls;
 
+    private Calendar calendarService;
+
 
     /**
      * Creates an authorized Credential object.
@@ -135,10 +137,13 @@ public class GoogleClient {
 
 
     private Calendar getCalendarService() throws IOException, GeneralSecurityException {
-        final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        return new Calendar.Builder(netHttpTransport, JSON_FACTORY, getCredentials(netHttpTransport))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+        if (calendarService == null) {
+            final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+            calendarService = new Calendar.Builder(netHttpTransport, JSON_FACTORY, getCredentials(netHttpTransport))
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+        }
+        return calendarService;
     }
 
 
@@ -218,14 +223,26 @@ public class GoogleClient {
         return event.getId();
     }
 
+    public void deleteCalendarEvent(String eventId) throws GeneralSecurityException, IOException {
+        deleteCalendarEvent(PRIMARY_CALENDAR_ID, eventId);
+    }
 
+
+    /**
+     * When deleting an event, this event is still accessible by the API for a long time.
+     *
+     * @param calendarId
+     * @param eventId
+     * @throws GeneralSecurityException
+     * @throws IOException
+     */
     public void deleteCalendarEvent(String calendarId, String eventId) throws GeneralSecurityException, IOException {
         final Calendar service = getCalendarService();
         Event event = service.events().get(calendarId, eventId).execute();
 
         if (event != null) {
             GoogleCalDAVLogger.debug(this.getClass(), "Event deleted: {}", event.getHtmlLink());
-            service.events().delete(calendarId, eventId).setSendNotifications(true).execute();
+            service.events().delete(calendarId, eventId).setSendUpdates("none").execute();
         } else {
             GoogleCalDAVLogger.debug(this.getClass(), "No event found with id '{}' on calendar '{}'.", eventId, calendarId);
         }
