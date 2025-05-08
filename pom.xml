@@ -2,7 +2,7 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.biit.appointment</groupId>
-	<artifactId>caldav.google</artifactId>
+	<artifactId>google-calendar</artifactId>
 	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Google CalDAV Google Client</name>
