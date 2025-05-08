@@ -4,13 +4,13 @@
 	<groupId>com.biit.appointment</groupId>
 	<artifactId>google-calendar</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>Google CalDAV Google Client</name>
 
 	<parent>
 		<groupId>com.biit</groupId>
 		<artifactId>versions</artifactId>
-		<version>[1.0,1.1)</version>
+		<version>1.0.62</version>
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 
@@ -30,7 +30,7 @@
 	<scm>
 		<connection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</connection>
 		<developerConnection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</developerConnection>
-		<tag>google-calendar-0.0.1</tag>
+		<tag>AppointmentCenterCalDAVGoogle</tag>
 	</scm>
 
 	<properties>
