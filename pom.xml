@@ -1,115 +1,126 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.biit.appointment</groupId>
-	<artifactId>google-calendar</artifactId>
-	<packaging>jar</packaging>
-	<version>0.1.2-SNAPSHOT</version>
-	<name>Google CalDAV Google Client</name>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.biit.appointment</groupId>
+    <artifactId>google-calendar</artifactId>
+    <packaging>jar</packaging>
+    <version>0.1.2-SNAPSHOT</version>
+    <name>Google CalDAV Google Client</name>
 
-	<parent>
-		<groupId>com.biit</groupId>
-		<artifactId>versions</artifactId>
-		<version>[1.0,1.1)</version>
-		<relativePath /> <!-- lookup parent from repository -->
-	</parent>
+    <parent>
+        <groupId>com.biit</groupId>
+        <artifactId>versions</artifactId>
+        <version>[1.0,1.1)</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
 
-	<distributionManagement>
-		<repository>
-			<id>central</id>
-			<name>libs-releases</name>
-			<url>https://artifactory.biit-solutions.com/artifactory/libs-release</url>
-		</repository>
-		<snapshotRepository>
-			<id>snapshots</id>
-			<name>libs-snapshot</name>
-			<url>https://artifactory.biit-solutions.com/artifactory/libs-snapshot</url>
-		</snapshotRepository>
-	</distributionManagement>
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>libs-releases</name>
+            <url>https://artifactory.biit-solutions.com/artifactory/libs-release</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>libs-snapshot</name>
+            <url>https://artifactory.biit-solutions.com/artifactory/libs-snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
 
-	<scm>
-		<connection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</connection>
-		<developerConnection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</developerConnection>
-		<tag>google-calendar-0.1.0</tag>
-	</scm>
+    <scm>
+        <connection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</connection>
+        <developerConnection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</developerConnection>
+        <tag>google-calendar-0.1.0</tag>
+    </scm>
 
-	<properties>
-		<main.basedir>${basedir}</main.basedir>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+    <properties>
+        <main.basedir>${basedir}</main.basedir>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>${java.version}</source>
-					<target>${java.version}</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>${maven-surefire.version}</version>
-				<configuration>
-					<suiteXmlFiles>
-						<suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
-					</suiteXmlFiles>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire.version}</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
-	<dependencies>
-		<dependency>
-			<groupId>com.biit.appointment</groupId>
-			<artifactId>appointment-center-dto</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.google.api-client</groupId>
-			<artifactId>google-api-client</artifactId>
-			<version>2.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.oauth-client</groupId>
-			<artifactId>google-oauth-client-jetty</artifactId>
-			<version>1.34.1</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.apis</groupId>
-			<artifactId>google-api-services-calendar</artifactId>
-			<version>v3-rev20220715-2.0.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.caldav4j</groupId>
-			<artifactId>caldav4j</artifactId>
-			<version>1.0.5</version>
-		</dependency>
+    <dependencies>
+        <dependency>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>appointment-center-dto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.api-client</groupId>
+            <artifactId>google-api-client</artifactId>
+            <version>2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.oauth-client</groupId>
+            <artifactId>google-oauth-client-jetty</artifactId>
+            <version>1.34.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-calendar</artifactId>
+            <version>v3-rev20220715-2.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.caldav4j</groupId>
+            <artifactId>caldav4j</artifactId>
+            <version>1.0.5</version>
+        </dependency>
 
-		<!-- Testing -->
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+        <!-- Testing -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <!--Skip on Jenkins-->
+        <profile>
+            <id>release</id>
+            <properties>
+                <skipTests>true</skipTests>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
 
