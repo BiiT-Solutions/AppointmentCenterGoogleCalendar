@@ -8,8 +8,9 @@
     <test name="Google CalDAV" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <include name="googleClientTest"/>
-                <include name="googleCredentialsTest"/>
+                <!-- Jenkins cannot obtain the tokens -->
+                <exclude name="googleClientTest"/>
+                <exclude name="googleCredentialsTest"/>
             </run>
         </groups>
         <classes>
