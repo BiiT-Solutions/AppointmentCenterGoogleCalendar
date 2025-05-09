@@ -9,8 +9,8 @@
         <groups>
             <run>
                 <!-- Jenkins cannot obtain the tokens -->
-                <exclude name="googleClientTest"/>
-                <exclude name="googleCredentialsTest"/>
+                <include name="googleClientTest"/>
+                <include name="googleCredentialsTest"/>
             </run>
         </groups>
         <classes>
