@@ -59,6 +59,25 @@
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.scm</groupId>
+                        <artifactId>maven-scm-provider-gitexe</artifactId>
+                        <version>${maven-scm-provider-gitexe.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <releaseProfiles>skipTestsProfile</releaseProfiles>
+                    <checkModificationExcludes>
+                        <checkModificationExclude>pom.xml</checkModificationExclude>
+                    </checkModificationExcludes>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -113,9 +132,9 @@
     </dependencies>
 
     <profiles>
-        <!--Skip on Jenkins-->
+        <!--Skip tests on Jenkins as cannot take google credentials -->
         <profile>
-            <id>release</id>
+            <id>skipTestsProfile</id>
             <properties>
                 <skipTests>true</skipTests>
             </properties>
