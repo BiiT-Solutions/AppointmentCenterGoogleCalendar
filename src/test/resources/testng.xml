@@ -8,7 +8,7 @@
     <test name="Google CalDAV" enabled="true" preserve-order="true">
         <groups>
             <run>
-                <!-- Jenkins cannot obtain the tokens -->
+                <!-- Jenkins cannot obtain the tokens. It is disabled on jenkins with a -DskipTests -->
                 <include name="googleClientTest"/>
                 <include name="googleCredentialsTest"/>
             </run>
