@@ -15,6 +15,13 @@ public class CredentialData {
         super();
     }
 
+    public CredentialData(String accessToken, String refreshToken, Long expirationTimeMilliseconds, UUID userId) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+        this.expirationTimeMilliseconds = expirationTimeMilliseconds;
+        this.userId = userId;
+    }
+
     public CredentialData(Credential credential, UUID user) {
         setAccessToken(credential.getAccessToken());
         setRefreshToken(credential.getRefreshToken());

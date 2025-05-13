@@ -61,4 +61,16 @@ public class CredentialsTest extends AbstractTestNGSpringContextTests {
         Assert.assertEquals(events.size(), 1);
     }
 
+//    @Test
+//    public void testGoogleTapCredentials() throws GeneralSecurityException, IOException {
+//        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO();
+//        externalCalendarCredentialsDTO.setUserCredentials();
+//        Credential storedCredentials = googleCalendarCredentialsConverter.reverse(externalCalendarCredentialsDTO);
+//
+//        final GoogleClient googleClient = new GoogleClient();
+//        List<Event> events = googleClient.getEvents(1, new DateTime(System.currentTimeMillis()), storedCredentials);
+//        googleClient.logEvents(events);
+//        Assert.assertEquals(events.size(), 1);
+//    }
+
 }

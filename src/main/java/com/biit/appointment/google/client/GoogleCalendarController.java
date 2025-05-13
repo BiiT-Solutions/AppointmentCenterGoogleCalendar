@@ -1,5 +1,6 @@
 package com.biit.appointment.google.client;
 
+import com.biit.appointment.core.controllers.IExternalCredentialsController;
 import com.biit.appointment.core.exceptions.ExternalCalendarActionException;
 import com.biit.appointment.core.exceptions.ExternalCalendarNotFoundException;
 import com.biit.appointment.core.models.AppointmentDTO;
@@ -9,12 +10,17 @@ import com.biit.appointment.core.providers.IExternalCalendarProvider;
 import com.biit.appointment.google.converter.AppointmentEventConverter;
 import com.biit.appointment.google.converter.GoogleCalendarCredentialsConverter;
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
+import com.biit.server.exceptions.UserNotFoundException;
+import com.biit.server.security.IAuthenticatedUser;
+import com.biit.server.security.IAuthenticatedUserProvider;
+import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class GoogleCalendarController implements IExternalCalendarProvider {
@@ -22,12 +28,17 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
     private final GoogleClient googleClient;
     private final AppointmentEventConverter eventConverter;
     private final GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter;
+    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IExternalCredentialsController externalCredentialsController;
 
     public GoogleCalendarController(GoogleClient googleClient, AppointmentEventConverter eventConverter,
-                                    GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter) {
+                                    GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter,
+                                    IAuthenticatedUserProvider authenticatedUserProvider, IExternalCredentialsController externalCredentialsController) {
         this.googleClient = googleClient;
         this.eventConverter = eventConverter;
         this.googleCalendarCredentialsConverter = googleCalendarCredentialsConverter;
+        this.authenticatedUserProvider = authenticatedUserProvider;
+        this.externalCredentialsController = externalCredentialsController;
 
         GoogleCalDAVLogger.info(this.getClass(), "### Google Calendar Controller initialized");
     }
@@ -103,5 +114,40 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
             throw new ExternalCalendarActionException(this.getClass(), e);
         }
+    }
+
+
+    public ExternalCalendarCredentialsDTO exchangeCodeForToken(String username, String code, String state) {
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
+        return exchangeCodeForToken(UUID.fromString(authenticatedUser.getUID()), code, state, username);
+    }
+
+
+    public ExternalCalendarCredentialsDTO exchangeCodeForToken(UUID userUUID, String code, String state, String createdBy) {
+        try {
+            final GoogleTokenResponse googleTokenResponse = googleClient.exchangeCodeForToken(code, state);
+            final CredentialData credentialData = new CredentialData(googleTokenResponse.getAccessToken(), googleTokenResponse.getRefreshToken(),
+                    googleTokenResponse.getExpiresInSeconds(), userUUID);
+            final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO(
+                    userUUID, CalendarProviderDTO.GOOGLE);
+            externalCalendarCredentialsDTO.setCredentialData(credentialData);
+            return externalCredentialsController.create(externalCalendarCredentialsDTO, createdBy);
+        } catch (IOException | GeneralSecurityException e) {
+            GoogleCalDAVLogger.errorMessage(this.getClass(), e);
+            throw new ExternalCalendarActionException(this.getClass(), e);
+        }
+    }
+
+    public void deleteToken(String username) {
+        final IAuthenticatedUser authenticatedUser = authenticatedUserProvider.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException(this.getClass(),
+                        "No user with username '" + username + "' found!"));
+        deleteToken(UUID.fromString(authenticatedUser.getUID()));
+    }
+
+    public void deleteToken(UUID userUUID) {
+        externalCredentialsController.delete(userUUID, CalendarProviderDTO.GOOGLE);
     }
 }
