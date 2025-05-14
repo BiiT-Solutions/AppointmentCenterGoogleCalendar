@@ -158,4 +158,20 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
     public void deleteToken(UUID userUUID) {
         externalCredentialsController.delete(userUUID, CalendarProviderDTO.GOOGLE);
     }
+
+    @Override
+    public ExternalCalendarCredentialsDTO updateToken(ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO) {
+        try {
+            final ExternalCalendarCredentialsDTO refreshedCalendarCredentials =
+                    new ExternalCalendarCredentialsDTO(externalCalendarCredentialsDTO.getUserId(), CalendarProviderDTO.GOOGLE);
+            final CredentialData credentialData = googleClient.refreshCredentials(externalCalendarCredentialsDTO.getCredentialData(CredentialData.class));
+            refreshedCalendarCredentials.setCredentialData(credentialData);
+            refreshedCalendarCredentials.setExpiresAt(Instant.ofEpochMilli(
+                    credentialData.getExpirationTimeMilliseconds()).atZone(ZoneId.systemDefault()).toLocalDateTime());
+            return refreshedCalendarCredentials;
+        } catch (IOException | GeneralSecurityException e) {
+            GoogleCalDAVLogger.errorMessage(this.getClass(), e);
+            throw new ExternalCalendarActionException(this.getClass(), e);
+        }
+    }
 }

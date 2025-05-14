@@ -4,11 +4,13 @@ import com.biit.appointment.google.logger.GoogleCalDAVLogger;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -39,6 +41,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @Component
 public class GoogleClient {
@@ -184,6 +187,20 @@ public class GoogleClient {
         credential.setExpirationTimeMilliseconds(credentialData.getExpirationTimeMilliseconds());
 
         return credential;
+    }
+
+    public CredentialData refreshCredentials(CredentialData credentialData) throws IOException, GeneralSecurityException {
+        return refreshCredentials(credentialData.getRefreshToken(), this.clientId, this.clientSecret, credentialData.getUserId());
+    }
+
+
+    public CredentialData refreshCredentials(String refreshToken, String clientId, String clientSecret, UUID userId) throws IOException, GeneralSecurityException {
+        final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        final TokenResponse tokenResponse = new GoogleRefreshTokenRequest(netHttpTransport, JSON_FACTORY,
+                refreshToken, clientId, clientSecret).setScopes(SCOPES).setGrantType("refresh_token").execute();
+
+        return new CredentialData(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(),
+                tokenResponse.getExpiresInSeconds(), userId);
     }
 
 
@@ -364,15 +381,6 @@ public class GoogleClient {
             GoogleCalDAVLogger.debug(this.getClass(), "No event found with id '{}' on calendar '{}'.", eventId, calendarId);
         }
     }
-
-
-//    public GoogleTokenResponse getCodeForOAuth() {
-//        //GoogleAuthorizationCodeRequestUrl googleAuthorizationCodeRequestUrl = new GoogleAuthorizationCodeRequestUrl()
-//        final AuthorizationCodeRequestUrl authorizationCodeRequestUrl = new AuthorizationCodeRequestUrl(AUTH_URI, clientId).setState(clientState)
-//        .setRedirectUri(redirectUrls.get(0)).build();
-//        response.sendRedirect(url);
-//
-//    }
 
 
     public GoogleTokenResponse exchangeCodeForToken(String code, String state) throws IOException, GeneralSecurityException {
