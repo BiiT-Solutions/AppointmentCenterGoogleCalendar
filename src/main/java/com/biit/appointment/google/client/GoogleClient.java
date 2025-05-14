@@ -194,7 +194,8 @@ public class GoogleClient {
     }
 
 
-    public CredentialData refreshCredentials(String refreshToken, String clientId, String clientSecret, UUID userId) throws IOException, GeneralSecurityException {
+    public CredentialData refreshCredentials(String refreshToken, String clientId, String clientSecret, UUID userId)
+            throws IOException, GeneralSecurityException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
         final TokenResponse tokenResponse = new GoogleRefreshTokenRequest(netHttpTransport, JSON_FACTORY,
                 refreshToken, clientId, clientSecret).setScopes(SCOPES).setGrantType("refresh_token").execute();
