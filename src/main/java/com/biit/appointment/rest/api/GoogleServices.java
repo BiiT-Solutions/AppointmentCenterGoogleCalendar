@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,7 +33,7 @@ public class GoogleServices {
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the credentials from a user on a specific provider.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/code/{code}/state/{state}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/code/{code}/state/{state}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuth(@Parameter(description = "Google Auth code.", required = true)
                                                         @PathVariable(name = "code") String code,
@@ -46,7 +47,7 @@ public class GoogleServices {
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the credentials from a user on a specific provider.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/code", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuthByRequestParams(@RequestParam(name = "code") String code,
                                                         @RequestParam(name = "state") String state,
