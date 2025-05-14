@@ -401,13 +401,13 @@ public class GoogleClient {
         try {
             return authorizationCodeTokenRequest.execute();
         } catch (Exception e) {
-            GoogleCalDAVLogger.debug(this.getClass(), new StringBuilder().append("Failed to connect to google API with:\n")
-                    .append("projectId: '{}'\n")
-                    .append("clientId: '{}'\n")
-                    .append("clientSecret: '{}'\n")
-                    .append("redirectUrls: '{}'\n")
-                    .append("code: '{}'\n")
-                    .append("state: '{}'\n").toString());
+            GoogleCalDAVLogger.debug(this.getClass(), "Failed to connect to google API with:\n"
+                    + "projectId: '{}'\n"
+                    + "clientId: '{}'\n"
+                    + "clientSecret: '{}'\n"
+                    + "redirectUrls: '{}'\n"
+                    + "code: '{}'\n"
+                    + "state: '{}'\n", projectId, clientId, clientSecret, redirectUrls, code, state);
             throw e;
         }
     }
