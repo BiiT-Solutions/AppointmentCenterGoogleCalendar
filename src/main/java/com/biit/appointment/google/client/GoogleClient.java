@@ -398,7 +398,18 @@ public class GoogleClient {
                 clientSecret,
                 code
         );
-        return authorizationCodeTokenRequest.execute();
+        try {
+            return authorizationCodeTokenRequest.execute();
+        } catch (Exception e) {
+            GoogleCalDAVLogger.debug(this.getClass(), new StringBuilder().append("Failed to connect to google API with:\n")
+                    .append("projectId: '{}'\n")
+                    .append("clientId: '{}'\n")
+                    .append("clientSecret: '{}'\n")
+                    .append("redirectUrls: '{}'\n")
+                    .append("code: '{}'\n")
+                    .append("state: '{}'\n").toString());
+            throw e;
+        }
     }
 
 }
