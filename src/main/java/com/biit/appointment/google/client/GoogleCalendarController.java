@@ -18,7 +18,9 @@ import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -129,12 +131,14 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
         GoogleCalDAVLogger.debug(this.getClass(), "Requesting token for code '{}' and state '{}'.", code, state);
         try {
             final GoogleTokenResponse googleTokenResponse = googleClient.exchangeCodeForToken(code, state);
-            GoogleCalDAVLogger.debug(this.getClass(), "Token for user '{}' generated", userUUID);
             final CredentialData credentialData = new CredentialData(googleTokenResponse.getAccessToken(), googleTokenResponse.getRefreshToken(),
                     googleTokenResponse.getExpiresInSeconds(), userUUID);
             final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO(
                     userUUID, CalendarProviderDTO.GOOGLE);
             externalCalendarCredentialsDTO.setCredentialData(credentialData);
+            externalCalendarCredentialsDTO.setExpiresAt(Instant.ofEpochMilli(
+                    credentialData.getExpirationTimeMilliseconds()).atZone(ZoneId.systemDefault()).toLocalDateTime());
+            GoogleCalDAVLogger.debug(this.getClass(), "Token for user '{}' generated. Expires at '{}'.", userUUID, externalCalendarCredentialsDTO.getExpiresAt());
             return externalCredentialsController.create(externalCalendarCredentialsDTO, createdBy);
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
