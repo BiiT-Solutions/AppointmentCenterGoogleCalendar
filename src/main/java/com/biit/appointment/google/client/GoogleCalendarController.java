@@ -138,7 +138,9 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
             externalCalendarCredentialsDTO.setCredentialData(credentialData);
             externalCalendarCredentialsDTO.setExpiresAt(Instant.ofEpochMilli(
                     credentialData.getExpirationTimeMilliseconds()).atZone(ZoneId.systemDefault()).toLocalDateTime());
-            GoogleCalDAVLogger.debug(this.getClass(), "Token for user '{}' generated. Expires at '{}'.", userUUID, externalCalendarCredentialsDTO.getExpiresAt());
+
+            GoogleCalDAVLogger.debug(this.getClass(), "Token for user '{}' generated. Expires at '{}'.", userUUID,
+                    externalCalendarCredentialsDTO.getExpiresAt());
             return externalCredentialsController.create(externalCalendarCredentialsDTO, createdBy);
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);

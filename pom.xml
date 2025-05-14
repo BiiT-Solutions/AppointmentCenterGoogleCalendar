@@ -96,6 +96,21 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.biit</groupId>
+            <artifactId>user-manager-system-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>appointment-center-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.biit.appointment</groupId>
+            <artifactId>appointment-center-persistence</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

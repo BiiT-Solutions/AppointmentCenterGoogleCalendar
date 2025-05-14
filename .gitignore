@@ -12,3 +12,4 @@ tmp
 /release.properties
 .idea/
 *.iml
+StoredCredential

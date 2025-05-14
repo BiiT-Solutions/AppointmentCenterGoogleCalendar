@@ -1,7 +1,6 @@
 package com.biit.appointment.google.client;
 
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
-import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
@@ -369,7 +368,8 @@ public class GoogleClient {
 
 //    public GoogleTokenResponse getCodeForOAuth() {
 //        //GoogleAuthorizationCodeRequestUrl googleAuthorizationCodeRequestUrl = new GoogleAuthorizationCodeRequestUrl()
-//        final AuthorizationCodeRequestUrl authorizationCodeRequestUrl = new AuthorizationCodeRequestUrl(AUTH_URI, clientId).setState(clientState).setRedirectUri(redirectUrls.get(0)).build();
+//        final AuthorizationCodeRequestUrl authorizationCodeRequestUrl = new AuthorizationCodeRequestUrl(AUTH_URI, clientId).setState(clientState)
+//        .setRedirectUri(redirectUrls.get(0)).build();
 //        response.sendRedirect(url);
 //
 //    }
