@@ -57,7 +57,7 @@ public class GoogleServices {
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes the credencial from the current logged in user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping(value = "/code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/code")
     @ResponseStatus(HttpStatus.OK)
     public void deleteGoogleAuth(Authentication authentication, HttpServletRequest request) {
         googleCalendarController.deleteToken(authentication.getName());
