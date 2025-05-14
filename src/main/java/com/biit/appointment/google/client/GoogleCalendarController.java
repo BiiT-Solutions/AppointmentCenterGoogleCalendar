@@ -126,8 +126,10 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
 
 
     public ExternalCalendarCredentialsDTO exchangeCodeForToken(UUID userUUID, String code, String state, String createdBy) {
+        GoogleCalDAVLogger.debug(this.getClass(), "Requesting token for code '{}' and state '{}'.", code, state);
         try {
             final GoogleTokenResponse googleTokenResponse = googleClient.exchangeCodeForToken(code, state);
+            GoogleCalDAVLogger.debug(this.getClass(), "Token for user '{}' generated", userUUID);
             final CredentialData credentialData = new CredentialData(googleTokenResponse.getAccessToken(), googleTokenResponse.getRefreshToken(),
                     googleTokenResponse.getExpiresInSeconds(), userUUID);
             final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO(

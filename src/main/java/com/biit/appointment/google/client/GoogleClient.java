@@ -1,6 +1,7 @@
 package com.biit.appointment.google.client;
 
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
+import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
@@ -364,6 +365,15 @@ public class GoogleClient {
             GoogleCalDAVLogger.debug(this.getClass(), "No event found with id '{}' on calendar '{}'.", eventId, calendarId);
         }
     }
+
+
+//    public GoogleTokenResponse getCodeForOAuth() {
+//        //GoogleAuthorizationCodeRequestUrl googleAuthorizationCodeRequestUrl = new GoogleAuthorizationCodeRequestUrl()
+//        final AuthorizationCodeRequestUrl authorizationCodeRequestUrl = new AuthorizationCodeRequestUrl(AUTH_URI, clientId).setState(clientState).setRedirectUri(redirectUrls.get(0)).build();
+//        response.sendRedirect(url);
+//
+//    }
+
 
     public GoogleTokenResponse exchangeCodeForToken(String code, String state) throws IOException, GeneralSecurityException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
