@@ -27,6 +27,7 @@ public class TokenTests extends AbstractTestNGSpringContextTests {
 
     @Test
     public void convertCredentials() {
+        //The token must be generated from the correct app to work this test.
         googleCalendarController.exchangeCodeForToken(userId, token, clientState, null);
     }
 
