@@ -87,7 +87,7 @@ public class GoogleClient {
     @Value("${google.client.secret:}")
     private String clientSecret;
 
-    @Value("${google.client.state}")
+    @Value("${google.client.state:}")
     private String clientState;
 
     @Value("${google.project.id:}")
