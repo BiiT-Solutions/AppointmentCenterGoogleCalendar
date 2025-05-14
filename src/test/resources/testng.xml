@@ -11,11 +11,13 @@
                 <!-- Jenkins cannot obtain the tokens. It is disabled on jenkins with a -DskipTests -->
                 <include name="googleClientTest"/>
                 <include name="googleCredentialsTest"/>
+                <include name="tokenTests"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.appointment.google.client.GoogleClient"/>
-            <class name="com.biit.appointment.google.client.CredentialsTest"/>
+            <class name="com.biit.appointment.google.client.CredentialsTests"/>
+            <class name="com.biit.appointment.google.client.TokenTests"/>
         </classes>
     </test>
 </suite>

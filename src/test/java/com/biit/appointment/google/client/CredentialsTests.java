@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @SpringBootTest
 @Test(groups = {"googleCredentialsTest"})
-public class CredentialsTest extends AbstractTestNGSpringContextTests {
+public class CredentialsTests extends AbstractTestNGSpringContextTests {
 
     private UUID userId = UUID.fromString("5566b76f-cc42-4304-b28e-36c6ef6ddc6a");
 
