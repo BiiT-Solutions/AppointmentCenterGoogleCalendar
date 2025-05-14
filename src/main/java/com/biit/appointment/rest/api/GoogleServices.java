@@ -34,7 +34,7 @@ public class GoogleServices {
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuth(@Parameter(description = "Google Auth code.", required = true)
                                                         @PathVariable(name = "code") String code,
-                                                        @Parameter(description = "State that matches the code on the google button.", required = true)
+                                                        @Parameter(description = "State that matches the code of the requester.", required = true)
                                                         @PathVariable(name = "state") String state,
                                                         Authentication authentication,
                                                         HttpServletRequest request) {
