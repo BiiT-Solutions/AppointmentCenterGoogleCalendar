@@ -2,6 +2,7 @@ package com.biit.appointment.rest.api;
 
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.google.client.GoogleCalendarController;
+import com.biit.appointment.google.logger.GoogleCalDAVLogger;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -31,7 +32,7 @@ public class GoogleServices {
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the credentials from a user on a specific provider.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/code/{code}/state/{state}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/oauth/code/{code}/state/{state}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuth(@Parameter(description = "Google Auth code.", required = true)
                                                         @PathVariable(name = "code") String code,
@@ -45,19 +46,20 @@ public class GoogleServices {
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Gets the credentials from a user on a specific provider.")
-    @GetMapping(value = "/code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/oauth", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuthByRequestParams(@RequestParam(name = "code") String code,
                                                                        @RequestParam(name = "state", required = false) String state,
                                                                        Authentication authentication,
                                                                        HttpServletRequest request) {
+        GoogleCalDAVLogger.debug(this.getClass(), "Received code '{}' and state '{}'.", code, state);
         return googleCalendarController.exchangeCodeForToken(authentication.getName(), code, state);
     }
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
     @Operation(summary = "Deletes the credencial from the current logged in user.", security = @SecurityRequirement(name = "bearerAuth"))
-    @DeleteMapping(value = "/code")
+    @DeleteMapping(value = "/oauth")
     @ResponseStatus(HttpStatus.OK)
     public void deleteGoogleAuth(Authentication authentication, HttpServletRequest request) {
         googleCalendarController.deleteToken(authentication.getName());
