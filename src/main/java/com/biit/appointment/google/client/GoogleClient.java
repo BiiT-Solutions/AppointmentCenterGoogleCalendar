@@ -391,6 +391,7 @@ public class GoogleClient {
 //            GoogleCalDAVLogger.severe(this.getClass(), "State '{}' does not match  with server '{}'.", state, clientState);
 //            throw new AccessDeniedException("State value is incorrect!");
 //        }
+        final String redirectUri = "https://" + serverDomain;
         final GoogleAuthorizationCodeTokenRequest authorizationCodeTokenRequest = new GoogleAuthorizationCodeTokenRequest(
                 netHttpTransport,
                 JSON_FACTORY,
@@ -398,7 +399,7 @@ public class GoogleClient {
                 clientId,
                 clientSecret,
                 code,
-                "https://" + serverDomain
+                redirectUri
         );
         try {
             return authorizationCodeTokenRequest.execute();
@@ -409,7 +410,8 @@ public class GoogleClient {
                     + "clientSecret: '{}'\n"
                     + "redirectUrls: '{}'\n"
                     + "code: '{}'\n"
-                    + "state: '{}'\n", projectId, clientId, clientSecret, redirectUrls, code, state);
+                    + "state: '{}'\n"
+                    + "redirectUri: '{}'", projectId, clientId, clientSecret, redirectUrls, code, state, redirectUri);
             throw e;
         }
     }
