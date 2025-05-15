@@ -399,8 +399,8 @@ public class GoogleClient {
                 TOKEN_URI,
                 clientId,
                 clientSecret,
-                code,
-                "https://" + serverDomain + "/appointment-center-backend/external-calendar-credentials/google/code"
+                code
+                //"https://" + serverDomain + "/appointment-center-backend/external-calendar-credentials/google/code"
         );
         try {
             return authorizationCodeTokenRequest.execute();
