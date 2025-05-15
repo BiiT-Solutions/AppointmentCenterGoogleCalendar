@@ -402,6 +402,7 @@ public class GoogleClient {
                 redirectUri
         );
         try {
+            GoogleCalDAVLogger.debug(this.getClass(), "Token obtained successfully for code '{}' from google!", code);
             return authorizationCodeTokenRequest.execute();
         } catch (Exception e) {
             GoogleCalDAVLogger.debug(this.getClass(), "Failed to connect to google API with:\n"

@@ -132,7 +132,7 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
         try {
             final GoogleTokenResponse googleTokenResponse = googleClient.exchangeCodeForToken(code, state);
             final CredentialData credentialData = new CredentialData(googleTokenResponse.getAccessToken(), googleTokenResponse.getRefreshToken(),
-                    googleTokenResponse.getExpiresInSeconds(), userUUID);
+                    googleTokenResponse.getExpiresInSeconds() * 1000, userUUID);
             final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO(
                     userUUID, CalendarProviderDTO.GOOGLE);
             externalCalendarCredentialsDTO.setCredentialData(credentialData);
