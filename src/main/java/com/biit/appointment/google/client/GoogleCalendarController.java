@@ -1,12 +1,12 @@
 package com.biit.appointment.google.client;
 
+import com.biit.appointment.core.controllers.IExternalCalendarController;
 import com.biit.appointment.core.controllers.IExternalCredentialsController;
 import com.biit.appointment.core.exceptions.ExternalCalendarActionException;
 import com.biit.appointment.core.exceptions.ExternalCalendarNotFoundException;
 import com.biit.appointment.core.models.AppointmentDTO;
 import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
-import com.biit.appointment.core.providers.IExternalCalendarProvider;
 import com.biit.appointment.google.converter.AppointmentEventConverter;
 import com.biit.appointment.google.converter.GoogleCalendarCredentialsConverter;
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-public class GoogleCalendarController implements IExternalCalendarProvider {
+public class GoogleCalendarController implements IExternalCalendarController {
 
     private final GoogleClient googleClient;
     private final AppointmentEventConverter eventConverter;
