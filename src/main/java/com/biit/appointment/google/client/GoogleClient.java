@@ -96,6 +96,9 @@ public class GoogleClient {
     @Value("${google.redirect.urls:}")
     private List<String> redirectUrls;
 
+    @Value("server.domain")
+    private String serverDomain;
+
     private Calendar calendarService;
 
 
@@ -396,7 +399,8 @@ public class GoogleClient {
                 TOKEN_URI,
                 clientId,
                 clientSecret,
-                code
+                code,
+                "https://" + serverDomain + "/appointment-center-backend/external-calendar-credentials/google/public/code"
         );
         try {
             return authorizationCodeTokenRequest.execute();

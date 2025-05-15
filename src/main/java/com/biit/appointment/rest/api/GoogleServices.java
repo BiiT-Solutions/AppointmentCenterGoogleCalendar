@@ -44,8 +44,8 @@ public class GoogleServices {
 
 
     @PreAuthorize("hasAnyAuthority(@securityService.viewerPrivilege, @securityService.editorPrivilege, @securityService.adminPrivilege)")
-    @Operation(summary = "Gets the credentials from a user on a specific provider.", security = @SecurityRequirement(name = "bearerAuth"))
-    @GetMapping(value = "/code", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Gets the credentials from a user on a specific provider.")
+    @GetMapping(value = "/public/code", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuthByRequestParams(@RequestParam(name = "code") String code,
                                                                        @RequestParam(name = "state") String state,
