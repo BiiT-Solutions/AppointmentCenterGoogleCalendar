@@ -94,7 +94,7 @@ public class GoogleClient {
     @Value("${google.redirect.urls:}")
     private List<String> redirectUrls;
 
-    @Value("server.domain")
+    @Value("${server.domain}")
     private String serverDomain;
 
     private Calendar calendarService;
