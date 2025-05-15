@@ -400,7 +400,7 @@ public class GoogleClient {
                 clientId,
                 clientSecret,
                 code,
-                "https://" + serverDomain + "/appointment-center-backend/external-calendar-credentials/google/public/code"
+                "https://localhost:8080/appointment-center-backend/external-calendar-credentials/google/code"
         );
         try {
             return authorizationCodeTokenRequest.execute();
