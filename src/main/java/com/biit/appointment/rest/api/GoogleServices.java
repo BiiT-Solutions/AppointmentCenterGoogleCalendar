@@ -49,7 +49,7 @@ public class GoogleServices {
     @GetMapping(value = "/oauth", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ExternalCalendarCredentialsDTO getGoogleAuthByRequestParams(@RequestParam(name = "code") String code,
-                                                                       @RequestParam(name = "state", required = false) String state,
+                                                                       @RequestParam(name = "state") String state,
                                                                        Authentication authentication,
                                                                        HttpServletRequest request) {
         GoogleCalDAVLogger.debug(this.getClass(), "Received code '{}' and state '{}'.", code, state);
