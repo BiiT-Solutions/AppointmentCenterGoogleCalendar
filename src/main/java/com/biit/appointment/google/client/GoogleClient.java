@@ -218,7 +218,11 @@ public class GoogleClient {
 
 
     private Calendar getCalendarService(Credential credentials) throws IOException, GeneralSecurityException {
-        if (calendarService == null && credentials != null) {
+        if (credentials == null) {
+            GoogleCalDAVLogger.warning(this.getClass(), "No credentials provided!");
+            return null;
+        }
+        if (calendarService == null) {
             final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
             calendarService = new Calendar.Builder(netHttpTransport, JSON_FACTORY, credentials)
                     .setApplicationName(APPLICATION_NAME)
