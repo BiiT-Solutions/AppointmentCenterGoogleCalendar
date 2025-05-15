@@ -24,6 +24,7 @@ import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.Events;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -39,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -387,10 +389,10 @@ public class GoogleClient {
 
     public GoogleTokenResponse exchangeCodeForToken(String code, String state) throws IOException, GeneralSecurityException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-//        if (!Objects.equals(state, clientState)) {
-//            GoogleCalDAVLogger.severe(this.getClass(), "State '{}' does not match  with server '{}'.", state, clientState);
-//            throw new AccessDeniedException("State value is incorrect!");
-//        }
+        if (!Objects.equals(state, clientState)) {
+            GoogleCalDAVLogger.severe(this.getClass(), "State '{}' does not match  with server '{}'.", state, clientState);
+            throw new AccessDeniedException("State value is incorrect!");
+        }
         final String redirectUri = "https://" + serverDomain;
         final GoogleAuthorizationCodeTokenRequest authorizationCodeTokenRequest = new GoogleAuthorizationCodeTokenRequest(
                 netHttpTransport,
