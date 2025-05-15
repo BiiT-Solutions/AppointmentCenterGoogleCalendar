@@ -141,6 +141,7 @@ public class GoogleCalendarController implements IExternalCalendarProvider {
 
             GoogleCalDAVLogger.debug(this.getClass(), "Token for user '{}' generated. Expires at '{}'.", userUUID,
                     externalCalendarCredentialsDTO.getExpiresAt());
+            externalCredentialsController.delete(userUUID, CalendarProviderDTO.GOOGLE);
             return externalCredentialsController.create(externalCalendarCredentialsDTO, createdBy);
         } catch (IOException | GeneralSecurityException e) {
             GoogleCalDAVLogger.errorMessage(this.getClass(), e);
