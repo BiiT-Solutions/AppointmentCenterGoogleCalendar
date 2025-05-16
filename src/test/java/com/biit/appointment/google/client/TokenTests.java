@@ -4,12 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.testng.AbstractTestNGSpringContextTests;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.UUID;
 
 @SpringBootTest
@@ -23,12 +19,12 @@ public class TokenTests extends AbstractTestNGSpringContextTests {
     private String clientState;
 
     @Autowired
-    private GoogleCalendarController googleCalendarController;
+    private GoogleCalendarService googleCalendarService;
 
     @Test
     public void convertCredentials() {
         //The token must be generated from the correct app to work this test.
-        googleCalendarController.exchangeCodeForToken(userId, token, clientState, null);
+        googleCalendarService.exchangeCodeForToken(userId, token, clientState, null);
     }
 
 

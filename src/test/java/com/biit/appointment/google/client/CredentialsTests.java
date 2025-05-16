@@ -38,15 +38,15 @@ public class CredentialsTests extends AbstractTestNGSpringContextTests {
     @BeforeClass
     public void getCredentials() throws GeneralSecurityException, IOException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        final GoogleClient googleClient = new GoogleClient();
-        credential = googleClient.getCredentials(userId.toString(), netHttpTransport);
+        final GoogleClientProvider googleClientProvider = new GoogleClientProvider();
+        credential = googleClientProvider.getCredentials(userId.toString(), netHttpTransport);
     }
 
     @Test
     public void testCredentials() throws IOException, GeneralSecurityException {
-        final GoogleClient googleClient = new GoogleClient();
-        List<Event> events = googleClient.getEvents(1, new DateTime(System.currentTimeMillis()), credential);
-        googleClient.logEvents(events);
+        final GoogleClientProvider googleClientProvider = new GoogleClientProvider();
+        List<Event> events = googleClientProvider.getEvents(1, new DateTime(System.currentTimeMillis()), credential);
+        googleClientProvider.logEvents(events);
         Assert.assertEquals(events.size(), 1);
     }
 
@@ -55,9 +55,9 @@ public class CredentialsTests extends AbstractTestNGSpringContextTests {
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = googleCalendarCredentialsConverter.convertElement(userId, credential);
         Credential storedCredentials = googleCalendarCredentialsConverter.reverse(externalCalendarCredentialsDTO);
 
-        final GoogleClient googleClient = new GoogleClient();
-        List<Event> events = googleClient.getEvents(1, new DateTime(System.currentTimeMillis()), storedCredentials);
-        googleClient.logEvents(events);
+        final GoogleClientProvider googleClientProvider = new GoogleClientProvider();
+        List<Event> events = googleClientProvider.getEvents(1, new DateTime(System.currentTimeMillis()), storedCredentials);
+        googleClientProvider.logEvents(events);
         Assert.assertEquals(events.size(), 1);
     }
 
