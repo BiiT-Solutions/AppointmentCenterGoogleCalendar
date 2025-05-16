@@ -16,7 +16,7 @@
             </run>
         </groups>
         <classes>
-            <class name="com.biit.appointment.google.client.GoogleClient"/>
+            <class name="com.biit.appointment.google.client.GoogleClientProvider"/>
             <class name="com.biit.appointment.google.client.CredentialsTests"/>
             <class name="com.biit.appointment.google.client.TokenTests"/>
         </classes>

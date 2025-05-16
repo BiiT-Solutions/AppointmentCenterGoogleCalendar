@@ -44,7 +44,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
-public class GoogleClient {
+public class GoogleClientProvider {
 
     private static final int DEFAULT_RECEIVER_PORT = 8888;
     private static final String DEFAULT_USER_ID = "user";
@@ -110,7 +110,7 @@ public class GoogleClient {
      */
     private GoogleClientSecrets getCredentialsFromResources() throws IOException {
         // Load client secrets.
-        final InputStream in = GoogleClient.class.getResourceAsStream(File.separator + CREDENTIALS_FILE_PATH);
+        final InputStream in = GoogleClientProvider.class.getResourceAsStream(File.separator + CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }

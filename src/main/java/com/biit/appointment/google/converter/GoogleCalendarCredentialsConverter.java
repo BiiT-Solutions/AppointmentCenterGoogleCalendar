@@ -3,7 +3,7 @@ package com.biit.appointment.google.converter;
 import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.biit.appointment.core.models.ExternalCalendarCredentialsDTO;
 import com.biit.appointment.google.client.CredentialData;
-import com.biit.appointment.google.client.GoogleClient;
+import com.biit.appointment.google.client.GoogleClientProvider;
 import com.google.api.client.auth.oauth2.Credential;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +14,10 @@ import java.util.UUID;
 @Component
 public class GoogleCalendarCredentialsConverter {
 
-    private final GoogleClient googleClient;
+    private final GoogleClientProvider googleClientProvider;
 
-    public GoogleCalendarCredentialsConverter(GoogleClient googleClient) {
-        this.googleClient = googleClient;
+    public GoogleCalendarCredentialsConverter(GoogleClientProvider googleClientProvider) {
+        this.googleClientProvider = googleClientProvider;
     }
 
 
@@ -30,6 +30,6 @@ public class GoogleCalendarCredentialsConverter {
     }
 
     public Credential reverse(ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO) throws GeneralSecurityException, IOException {
-        return googleClient.getCredentials(externalCalendarCredentialsDTO.getCredentialData(CredentialData.class));
+        return googleClientProvider.getCredentials(externalCalendarCredentialsDTO.getCredentialData(CredentialData.class));
     }
 }
