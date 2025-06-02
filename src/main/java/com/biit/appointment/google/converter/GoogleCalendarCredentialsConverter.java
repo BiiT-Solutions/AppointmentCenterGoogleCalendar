@@ -23,7 +23,7 @@ public class GoogleCalendarCredentialsConverter {
 
     public ExternalCalendarCredentialsDTO convertElement(UUID user, Credential credential) {
         final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO();
-        externalCalendarCredentialsDTO.setProvider(CalendarProviderDTO.GOOGLE);
+        externalCalendarCredentialsDTO.setCalendarProvider(CalendarProviderDTO.GOOGLE);
         externalCalendarCredentialsDTO.setUserId(user);
         externalCalendarCredentialsDTO.setCredentialData(new CredentialData(credential, user));
         return externalCalendarCredentialsDTO;
