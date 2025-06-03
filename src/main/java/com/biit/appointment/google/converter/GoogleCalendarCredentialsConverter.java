@@ -29,6 +29,14 @@ public class GoogleCalendarCredentialsConverter {
         return externalCalendarCredentialsDTO;
     }
 
+    public ExternalCalendarCredentialsDTO convertElement(UUID user, CredentialData credentialData) {
+        final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO();
+        externalCalendarCredentialsDTO.setCalendarProvider(CalendarProviderDTO.GOOGLE);
+        externalCalendarCredentialsDTO.setUserId(user);
+        externalCalendarCredentialsDTO.setCredentialData(credentialData);
+        return externalCalendarCredentialsDTO;
+    }
+
     public Credential reverse(ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO) throws GeneralSecurityException, IOException {
         return googleClientProvider.getCredentials(externalCalendarCredentialsDTO.getCredentialData(CredentialData.class));
     }

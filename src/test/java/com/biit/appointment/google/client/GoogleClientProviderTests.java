@@ -35,7 +35,7 @@ public class GoogleClientProviderTests {
     }
 
     @BeforeClass
-    public void getCredentials() throws IOException, GeneralSecurityException, IOException {
+    public void getCredentials() throws GeneralSecurityException, IOException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
         final GoogleClientProvider googleClientProvider = new GoogleClientProvider();
         credential = googleClientProvider.getCredentials(netHttpTransport);
