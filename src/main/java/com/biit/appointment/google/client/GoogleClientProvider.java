@@ -401,7 +401,7 @@ public class GoogleClientProvider {
             GoogleCalDAVLogger.severe(this.getClass(), "State '{}' does not match  with server '{}'.", state, clientState);
             throw new AccessDeniedException("State value is incorrect!");
         }
-        final String redirectUri = redirectUrls.get(0);
+        final String redirectUri = String.join(",", redirectUrls);
         final GoogleAuthorizationCodeTokenRequest authorizationCodeTokenRequest = new GoogleAuthorizationCodeTokenRequest(
                 netHttpTransport,
                 JSON_FACTORY,
