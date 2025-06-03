@@ -4,7 +4,7 @@
     <groupId>com.biit.appointment</groupId>
     <artifactId>google-calendar</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.7-SNAPSHOT</version>
+    <version>0.2.8-SNAPSHOT</version>
     <name>Google CalDAV Google Client</name>
 
     <parent>
