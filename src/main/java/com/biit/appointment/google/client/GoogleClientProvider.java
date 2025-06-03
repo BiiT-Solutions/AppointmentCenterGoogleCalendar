@@ -99,6 +99,9 @@ public class GoogleClientProvider {
     @Value("${server.domain:localhost}")
     private String serverDomain;
 
+    @Value("${server.protocol:http}")
+    private String serverProtocol;
+
     private Calendar calendarService;
 
 
@@ -397,7 +400,7 @@ public class GoogleClientProvider {
             GoogleCalDAVLogger.severe(this.getClass(), "State '{}' does not match  with server '{}'.", state, clientState);
             throw new AccessDeniedException("State value is incorrect!");
         }
-        final String redirectUri = "https://" + serverDomain;
+        final String redirectUri = serverProtocol + "://" + serverDomain;
         final GoogleAuthorizationCodeTokenRequest authorizationCodeTokenRequest = new GoogleAuthorizationCodeTokenRequest(
                 netHttpTransport,
                 JSON_FACTORY,
@@ -415,6 +418,7 @@ public class GoogleClientProvider {
                     + "projectId: '{}'\n"
                     + "clientId: '{}'\n"
                     + "clientSecret: '{}'\n"
+                    + "redirectUrls: '{}'\n"
                     + "code: '{}'\n"
                     + "state: '{}'\n"
                     + "redirectUri: '{}'", projectId, clientId, clientSecret, redirectUrls, code, state, redirectUri);
