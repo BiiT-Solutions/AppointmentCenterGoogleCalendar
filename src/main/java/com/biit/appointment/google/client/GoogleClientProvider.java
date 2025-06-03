@@ -48,6 +48,7 @@ public class GoogleClientProvider {
 
     private static final int DEFAULT_RECEIVER_PORT = 8888;
     private static final String DEFAULT_USER_ID = "user";
+    private static final int MILLISECONDS = 1000;
 
     private static final String AUTH_URI = "https://accounts.google.com/o/oauth2/auth";
     private static final String TOKEN_URI = "https://oauth2.googleapis.com/token";
@@ -207,7 +208,7 @@ public class GoogleClientProvider {
                 refreshToken, clientId, clientSecret).setScopes(SCOPES).setGrantType("refresh_token").execute();
 
         return new CredentialData(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(),
-                tokenResponse.getExpiresInSeconds(), userId);
+                tokenResponse.getExpiresInSeconds() * MILLISECONDS, userId);
     }
 
 
