@@ -28,6 +28,7 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
 
     //Refresh tokens expires after six months of not using them (https://developers.google.com/identity/protocols/oauth2#expiration).
     private static final int REFRESH_TOKEN_EXPIRATION_DAYS = 90;
+    private static final int MILLIS = 1000;
 
     private final GoogleClientProvider googleClientProvider;
     private final AppointmentEventConverter eventConverter;
@@ -136,8 +137,7 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
             final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO(
                     userUUID, CalendarProviderDTO.GOOGLE);
             externalCalendarCredentialsDTO.setCredentialData(credentialData);
-            externalCalendarCredentialsDTO.setExpiresAt(Instant.ofEpochMilli(
-                    credentialData.getExpirationTimeMilliseconds()).atZone(ZoneId.systemDefault()).toLocalDateTime());
+            externalCalendarCredentialsDTO.setExpiresAt(credentialData.getCreatedAt().plusSeconds(googleTokenResponse.getExpiresInSeconds()));
             externalCalendarCredentialsDTO.setForceRefreshAt(LocalDateTime.now().plusDays(REFRESH_TOKEN_EXPIRATION_DAYS));
             externalCalendarCredentialsDTO.setCreatedBy(createdBy);
 

@@ -2,6 +2,7 @@ package com.biit.appointment.google.client;
 
 import com.google.api.client.auth.oauth2.Credential;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class CredentialData {
@@ -10,12 +11,15 @@ public class CredentialData {
     private String accessToken;
     private String refreshToken;
     private Long expirationTimeMilliseconds;
+    private LocalDateTime createdAt;
 
     public CredentialData() {
         super();
+        createdAt = LocalDateTime.now();
     }
 
     public CredentialData(String accessToken, String refreshToken, Long expirationTimeMilliseconds, UUID userId) {
+        this();
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expirationTimeMilliseconds = expirationTimeMilliseconds;
@@ -23,6 +27,7 @@ public class CredentialData {
     }
 
     public CredentialData(Credential credential, UUID user) {
+        this();
         setAccessToken(credential.getAccessToken());
         setRefreshToken(credential.getRefreshToken());
         setExpirationTimeMilliseconds(credential.getExpirationTimeMilliseconds());
@@ -59,5 +64,23 @@ public class CredentialData {
 
     public void setExpirationTimeMilliseconds(Long expirationTimeMilliseconds) {
         this.expirationTimeMilliseconds = expirationTimeMilliseconds;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    @Override
+    public String toString() {
+        return "CredentialData{"
+                + "userId=" + userId
+                + ", accessToken='" + accessToken + '\''
+                + ", refreshToken='" + refreshToken + '\''
+                + ", expirationTimeMilliseconds=" + expirationTimeMilliseconds
+                + '}';
     }
 }
