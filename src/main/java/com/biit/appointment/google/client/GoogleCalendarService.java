@@ -136,6 +136,7 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
                     googleTokenResponse.getExpiresInSeconds() * 1000, userUUID);
             final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO(
                     userUUID, CalendarProviderDTO.GOOGLE);
+            GoogleCalDAVLogger.debug(this.getClass(), "Credentials obtained from code successfully. Value\n{}", credentialData);
             externalCalendarCredentialsDTO.setCredentialData(credentialData);
             externalCalendarCredentialsDTO.setExpiresAt(credentialData.getCreatedAt().plusSeconds(googleTokenResponse.getExpiresInSeconds()));
             externalCalendarCredentialsDTO.setForceRefreshAt(LocalDateTime.now().plusDays(REFRESH_TOKEN_EXPIRATION_DAYS));
@@ -157,6 +158,7 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
                     new ExternalCalendarCredentialsDTO(externalCalendarCredentialsDTO.getUserId(), CalendarProviderDTO.GOOGLE);
             final CredentialData credentialData = googleClientProvider.refreshCredentials(externalCalendarCredentialsDTO
                     .getCredentialData(CredentialData.class));
+            GoogleCalDAVLogger.debug(this.getClass(), "Credential data refreshed. Value\n{}", credentialData);
             refreshedCalendarCredentials.setCredentialData(credentialData);
             refreshedCalendarCredentials.setExpiresAt(Instant.ofEpochMilli(
                     credentialData.getExpirationTimeMilliseconds()).atZone(ZoneId.systemDefault()).toLocalDateTime());
