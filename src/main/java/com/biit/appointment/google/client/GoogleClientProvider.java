@@ -397,7 +397,7 @@ public class GoogleClientProvider {
 
     public GoogleTokenResponse exchangeCodeForToken(String code, String state) throws IOException, GeneralSecurityException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        if (!Objects.equals(state, clientState)) {
+        if (state != null && !Objects.equals(state, clientState)) {
             GoogleCalDAVLogger.severe(this.getClass(), "State '{}' does not match  with server '{}'.", state, clientState);
             throw new AccessDeniedException("State value is incorrect!");
         }
