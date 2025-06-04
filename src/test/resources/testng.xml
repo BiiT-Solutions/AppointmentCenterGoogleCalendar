@@ -13,12 +13,14 @@
                 <include name="googleCredentialsTest"/>
                 <!-- Not working as we cannot get a correct token for localhost -->
                 <exclude name="tokenTests"/>
+                <exclude name="eventTests"/>
             </run>
         </groups>
         <classes>
             <class name="com.biit.appointment.google.client.GoogleClientProvider"/>
             <class name="com.biit.appointment.google.client.CredentialsTests"/>
             <class name="com.biit.appointment.google.client.TokenTests"/>
+            <class name="com.biit.appointment.google.client.EventTests"/>
         </classes>
     </test>
 </suite>

@@ -4,7 +4,6 @@ import com.biit.appointment.google.logger.GoogleCalDAVLogger;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
@@ -36,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -102,8 +102,6 @@ public class GoogleClientProvider {
 
     @Value("${server.protocol:http}")
     private String serverProtocol;
-
-    private Calendar calendarService;
 
 
     /**
@@ -197,25 +195,31 @@ public class GoogleClientProvider {
     }
 
     public CredentialData refreshCredentials(CredentialData credentialData) throws IOException, GeneralSecurityException {
-        return refreshCredentials(credentialData.getRefreshToken(), this.clientId, this.clientSecret, credentialData.getUserId());
+        return refreshCredentials(credentialData.getRefreshToken(),
+                //Remaining time of the old refresh Token.
+                credentialData.getRefreshTokenExpirationTimeMilliseconds()
+                        - (ChronoUnit.SECONDS.between(LocalDateTime.now(), credentialData.getCreatedAt())) * MILLISECONDS,
+                this.clientId, this.clientSecret, credentialData.getUserId());
     }
 
 
-    public CredentialData refreshCredentials(String refreshToken, String clientId, String clientSecret, UUID userId)
+    public CredentialData refreshCredentials(String refreshToken, Long refreshTokenExpirationTime, String clientId, String clientSecret, UUID userId)
             throws IOException, GeneralSecurityException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-        final TokenResponse tokenResponse = new GoogleRefreshTokenRequest(netHttpTransport, JSON_FACTORY,
+        final GoogleTokenResponse tokenResponse = new GoogleRefreshTokenRequest(netHttpTransport, JSON_FACTORY,
                 refreshToken, clientId, clientSecret).setScopes(SCOPES).setGrantType("refresh_token").execute();
 
-        return new CredentialData(tokenResponse.getAccessToken(), tokenResponse.getRefreshToken(),
-                tokenResponse.getExpiresInSeconds() * MILLISECONDS, userId);
+        return new CredentialData(tokenResponse.getAccessToken(),
+                //No refresh token provided. Keep using the old one.
+                tokenResponse.getRefreshToken() == null ? refreshToken : tokenResponse.getRefreshToken(),
+                tokenResponse.getExpiresInSeconds() * MILLISECONDS,
+                //No refresh token provided. Keep using the time remaining.
+                tokenResponse.getRefreshToken() == null ? refreshTokenExpirationTime : GoogleCalendarService.REFRESH_TOKEN_EXPIRATION_SECONDS * MILLISECONDS,
+                userId);
     }
 
 
     private Calendar getCalendarService() throws IOException, GeneralSecurityException {
-        if (calendarService != null) {
-            return calendarService;
-        }
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
         return getCalendarService(getCredentials(netHttpTransport));
     }
@@ -226,13 +230,10 @@ public class GoogleClientProvider {
             GoogleCalDAVLogger.warning(this.getClass(), "No credentials provided!");
             return null;
         }
-        if (calendarService == null) {
-            final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
-            calendarService = new Calendar.Builder(netHttpTransport, JSON_FACTORY, credentials)
-                    .setApplicationName(APPLICATION_NAME)
-                    .build();
-        }
-        return calendarService;
+        final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        return new Calendar.Builder(netHttpTransport, JSON_FACTORY, credentials)
+                //.setApplicationName(APPLICATION_NAME)
+                .build();
     }
 
 

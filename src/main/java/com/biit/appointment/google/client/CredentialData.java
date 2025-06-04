@@ -11,6 +11,7 @@ public class CredentialData {
     private String accessToken;
     private String refreshToken;
     private Long expirationTimeMilliseconds;
+    private Long refreshTokenExpirationTimeMilliseconds;
     private LocalDateTime createdAt;
 
     public CredentialData() {
@@ -18,11 +19,12 @@ public class CredentialData {
         createdAt = LocalDateTime.now();
     }
 
-    public CredentialData(String accessToken, String refreshToken, Long expirationTimeMilliseconds, UUID userId) {
+    public CredentialData(String accessToken, String refreshToken, Long expirationTimeMilliseconds, Long refreshTokenExpirationTimeMilliseconds, UUID userId) {
         this();
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expirationTimeMilliseconds = expirationTimeMilliseconds;
+        this.refreshTokenExpirationTimeMilliseconds = refreshTokenExpirationTimeMilliseconds;
         this.userId = userId;
     }
 
@@ -66,6 +68,14 @@ public class CredentialData {
         this.expirationTimeMilliseconds = expirationTimeMilliseconds;
     }
 
+    public Long getRefreshTokenExpirationTimeMilliseconds() {
+        return refreshTokenExpirationTimeMilliseconds;
+    }
+
+    public void setRefreshTokenExpirationTimeMilliseconds(Long refreshTokenExpirationTimeMilliseconds) {
+        this.refreshTokenExpirationTimeMilliseconds = refreshTokenExpirationTimeMilliseconds;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -81,6 +91,7 @@ public class CredentialData {
                 + ", accessToken='" + accessToken + '\''
                 + ", refreshToken='" + refreshToken + '\''
                 + ", expirationTimeMilliseconds=" + expirationTimeMilliseconds
+                + ", refreshTokenExpirationTimeMilliseconds=" + refreshTokenExpirationTimeMilliseconds
                 + '}';
     }
 }
