@@ -27,7 +27,8 @@ import java.util.UUID;
 public class GoogleCalendarService implements IExternalProviderCalendarService {
 
     //Refresh tokens expires after six months of not using them (https://developers.google.com/identity/protocols/oauth2#expiration).
-    private static final int REFRESH_TOKEN_EXPIRATION_DAYS = 90;
+    public static final int REFRESH_TOKEN_EXPIRATION_DAYS = 7;
+    public static final long REFRESH_TOKEN_EXPIRATION_SECONDS = (REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60) - 1;
     private static final int MILLIS = 1000;
 
     private final GoogleClientProvider googleClientProvider;
@@ -133,7 +134,8 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
         try {
             final GoogleTokenResponse googleTokenResponse = googleClientProvider.exchangeCodeForToken(code, state);
             final CredentialData credentialData = new CredentialData(googleTokenResponse.getAccessToken(), googleTokenResponse.getRefreshToken(),
-                    googleTokenResponse.getExpiresInSeconds() * 1000, userUUID);
+                    googleTokenResponse.getExpiresInSeconds() * 1000,
+                    REFRESH_TOKEN_EXPIRATION_SECONDS * 1000, userUUID);
             final ExternalCalendarCredentialsDTO externalCalendarCredentialsDTO = new ExternalCalendarCredentialsDTO(
                     userUUID, CalendarProviderDTO.GOOGLE);
             GoogleCalDAVLogger.debug(this.getClass(), "Credentials obtained from code successfully. Value\n{}", credentialData);
