@@ -74,7 +74,7 @@ public class GoogleClientProvider {
     /**
      * CalendarScopes.CALENDAR_READONLY if only can read.
      */
-    private static final List<String> SCOPES = Arrays.asList(CalendarScopes.CALENDAR_READONLY, CalendarScopes.CALENDAR_EVENTS_READONLY);
+    private static final List<String> SCOPES = List.of(CalendarScopes.CALENDAR_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "client_secret.json";
 
     private static final String PRIMARY_CALENDAR_ID = "primary";
