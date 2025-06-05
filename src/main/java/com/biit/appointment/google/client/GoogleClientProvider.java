@@ -417,6 +417,7 @@ public class GoogleClientProvider {
                 code,
                 redirectUri
         );
+        authorizationCodeTokenRequest.setScopes(SCOPES);
         try {
             GoogleCalDAVLogger.debug(this.getClass(), "Token obtained successfully for code '{}' from google!", code);
             return authorizationCodeTokenRequest.execute();
