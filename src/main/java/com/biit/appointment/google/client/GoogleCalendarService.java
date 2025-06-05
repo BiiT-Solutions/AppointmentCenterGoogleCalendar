@@ -17,9 +17,7 @@ import org.springframework.stereotype.Controller;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -162,8 +160,7 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
                     .getCredentialData(CredentialData.class));
             GoogleCalDAVLogger.debug(this.getClass(), "Credential data refreshed. Value\n{}", credentialData);
             refreshedCalendarCredentials.setCredentialData(credentialData);
-            refreshedCalendarCredentials.setExpiresAt(Instant.ofEpochMilli(
-                    credentialData.getExpirationTimeMilliseconds()).atZone(ZoneId.systemDefault()).toLocalDateTime());
+            refreshedCalendarCredentials.setExpiresAt(LocalDateTime.now().plusSeconds(credentialData.getExpirationTimeMilliseconds() / MILLIS));
             refreshedCalendarCredentials.setForceRefreshAt(LocalDateTime.now().plusDays(REFRESH_TOKEN_EXPIRATION_DAYS));
             return refreshedCalendarCredentials;
         } catch (IOException | GeneralSecurityException e) {

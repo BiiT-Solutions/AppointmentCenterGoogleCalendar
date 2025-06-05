@@ -37,7 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -74,7 +74,7 @@ public class GoogleClientProvider {
     /**
      * CalendarScopes.CALENDAR_READONLY if only can read.
      */
-    private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
+    private static final List<String> SCOPES = Arrays.asList(CalendarScopes.CALENDAR_READONLY, CalendarScopes.CALENDAR_EVENTS_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "client_secret.json";
 
     private static final String PRIMARY_CALENDAR_ID = "primary";
@@ -232,7 +232,7 @@ public class GoogleClientProvider {
         }
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
         return new Calendar.Builder(netHttpTransport, JSON_FACTORY, credentials)
-                //.setApplicationName(APPLICATION_NAME)
+                .setApplicationName(APPLICATION_NAME)
                 .build();
     }
 
@@ -254,11 +254,13 @@ public class GoogleClientProvider {
         }
     }
 
+
     public List<Event> getEvents(int numberOfEvents, LocalDateTime startingFrom, Credential credential) throws IOException, GeneralSecurityException {
         return getEvents(PRIMARY_CALENDAR_ID, numberOfEvents,
                 new DateTime(Date.from(startingFrom.atZone(ZoneId.systemDefault()).toInstant())),
                 credential);
     }
+
 
     public List<Event> getEvents(int numberOfEvents, DateTime startingFrom, Credential credential)
             throws IOException, GeneralSecurityException {
@@ -286,16 +288,19 @@ public class GoogleClientProvider {
         return events.getItems();
     }
 
+
     public List<Event> getEvents(LocalDateTime startingFrom, LocalDateTime untilTo, Credential credential) throws IOException, GeneralSecurityException {
         return getEvents(PRIMARY_CALENDAR_ID, new DateTime(Date.from(startingFrom.atZone(ZoneId.systemDefault()).toInstant())),
                 new DateTime(Date.from(untilTo.atZone(ZoneId.systemDefault()).toInstant())),
                 credential);
     }
 
+
     public List<Event> getEvents(DateTime startingFrom, DateTime untilTo, Credential credential)
             throws IOException, GeneralSecurityException {
         return getEvents(PRIMARY_CALENDAR_ID, startingFrom, untilTo, credential);
     }
+
 
     public List<Event> getEvents(String calendarId, DateTime startingFrom, DateTime untilTo, Credential credential)
             throws IOException, GeneralSecurityException {
