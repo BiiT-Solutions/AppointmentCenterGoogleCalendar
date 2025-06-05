@@ -5,7 +5,7 @@
     <artifactId>google-calendar</artifactId>
     <packaging>jar</packaging>
     <version>0.2.18-SNAPSHOT</version>
-    <name>Google CalDAV Google Client</name>
+    <name>Google Calendar Client</name>
 
     <parent>
         <groupId>com.biit</groupId>
@@ -28,8 +28,8 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</connection>
-        <developerConnection>scm:git:git.biit-solutions.com:Java/AppointmentCenterCalDAVGoogle.git</developerConnection>
+        <connection>scm:git:git.biit-solutions.com:Java/AppointmentCenterGoogleCalendar.git</connection>
+        <developerConnection>scm:git:git.biit-solutions.com:Java/AppointmentCenterGoogleCalendar.git</developerConnection>
         <tag>google-calendar-0.1.0</tag>
     </scm>
 
