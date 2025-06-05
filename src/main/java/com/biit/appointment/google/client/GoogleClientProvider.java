@@ -415,11 +415,11 @@ public class GoogleClientProvider {
                 clientSecret,
                 code,
                 redirectUri
-        );
-        authorizationCodeTokenRequest.setScopes(SCOPES);
+        ).setScopes(SCOPES);
         try {
+            final GoogleTokenResponse response = authorizationCodeTokenRequest.execute();
             GoogleCalDAVLogger.debug(this.getClass(), "Token obtained successfully for code '{}' from google!", code);
-            return authorizationCodeTokenRequest.execute();
+            return response;
         } catch (Exception e) {
             GoogleCalDAVLogger.debug(this.getClass(), "Failed to connect to google API with:\n"
                     + "projectId: '{}'\n"
