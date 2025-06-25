@@ -4,7 +4,7 @@
     <groupId>com.biit.appointment</groupId>
     <artifactId>google-calendar</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.20-SNAPSHOT</version>
+    <version>0.2.20</version>
     <name>Google Calendar Client</name>
 
     <parent>
@@ -30,7 +30,7 @@
     <scm>
         <connection>scm:git:git.biit-solutions.com:Java/AppointmentCenterGoogleCalendar.git</connection>
         <developerConnection>scm:git:git.biit-solutions.com:Java/AppointmentCenterGoogleCalendar.git</developerConnection>
-        <tag>google-calendar-0.1.0</tag>
+        <tag>google-calendar-0.2.20</tag>
     </scm>
 
     <properties>
