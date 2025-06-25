@@ -1,6 +1,7 @@
 package com.biit.appointment.google.client;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.gson.annotations.JsonAdapter;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +11,7 @@ public class CredentialData {
     private String refreshToken;
     private Long expirationTimeMilliseconds;
     private Long refreshTokenExpirationTimeMilliseconds;
+    @JsonAdapter(LocalDateTimeAdapter.class)
     private LocalDateTime createdAt;
 
     public CredentialData() {
