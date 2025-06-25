@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 @Component
 public class GoogleClientProvider {
@@ -181,7 +180,7 @@ public class GoogleClientProvider {
                 .setTransport(netHttpTransport)
                 .setJsonFactory(JSON_FACTORY)
                 .setTokenServerEncodedUrl(TOKEN_URI)
-                .setClientAuthentication(new ClientParametersAuthentication(credentialData.getUserId().toString(),
+                .setClientAuthentication(new ClientParametersAuthentication(this.clientId,
                         this.clientSecret))
                 .setClock(Clock.SYSTEM).build();
 
@@ -198,11 +197,11 @@ public class GoogleClientProvider {
                 //Remaining time of the old refresh Token.
                 credentialData.getRefreshTokenExpirationTimeMilliseconds()
                         - (ChronoUnit.SECONDS.between(LocalDateTime.now(), credentialData.getCreatedAt())) * MILLISECONDS,
-                this.clientId, this.clientSecret, credentialData.getUserId());
+                this.clientId, this.clientSecret);
     }
 
 
-    public CredentialData refreshCredentials(String refreshToken, Long refreshTokenExpirationTime, String clientId, String clientSecret, UUID userId)
+    public CredentialData refreshCredentials(String refreshToken, Long refreshTokenExpirationTime, String clientId, String clientSecret)
             throws IOException, GeneralSecurityException {
         final NetHttpTransport netHttpTransport = GoogleNetHttpTransport.newTrustedTransport();
         final GoogleTokenResponse tokenResponse = new GoogleRefreshTokenRequest(netHttpTransport, JSON_FACTORY,
@@ -213,8 +212,7 @@ public class GoogleClientProvider {
                 tokenResponse.getRefreshToken() == null ? refreshToken : tokenResponse.getRefreshToken(),
                 tokenResponse.getExpiresInSeconds() * MILLISECONDS,
                 //No refresh token provided. Keep using the time remaining.
-                tokenResponse.getRefreshToken() == null ? refreshTokenExpirationTime : GoogleCalendarService.REFRESH_TOKEN_EXPIRATION_SECONDS * MILLISECONDS,
-                userId);
+                tokenResponse.getRefreshToken() == null ? refreshTokenExpirationTime : GoogleCalendarService.REFRESH_TOKEN_EXPIRATION_SECONDS * MILLISECONDS);
     }
 
 

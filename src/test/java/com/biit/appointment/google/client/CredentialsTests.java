@@ -87,7 +87,6 @@ public class CredentialsTests extends AbstractTestNGSpringContextTests {
         final CredentialData credentialData2 = externalCalendarCredentialsDTO.getCredentialData(CredentialData.class);
         Assert.assertEquals(credentialData.getAccessToken(), credentialData2.getAccessToken());
         Assert.assertEquals(credentialData.getRefreshToken(), credentialData2.getRefreshToken());
-        Assert.assertEquals(credentialData.getUserId(), credentialData2.getUserId());
         Assert.assertEquals(credentialData.getCreatedAt(), credentialData2.getCreatedAt());
         Assert.assertEquals(credentialData.getExpirationTimeMilliseconds(), credentialData2.getExpirationTimeMilliseconds());
     }

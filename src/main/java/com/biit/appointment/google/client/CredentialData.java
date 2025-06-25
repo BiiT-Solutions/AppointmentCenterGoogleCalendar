@@ -3,11 +3,9 @@ package com.biit.appointment.google.client;
 import com.google.api.client.auth.oauth2.Credential;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class CredentialData {
 
-    private UUID userId;
     private String accessToken;
     private String refreshToken;
     private Long expirationTimeMilliseconds;
@@ -19,29 +17,19 @@ public class CredentialData {
         createdAt = LocalDateTime.now();
     }
 
-    public CredentialData(String accessToken, String refreshToken, Long expirationTimeMilliseconds, Long refreshTokenExpirationTimeMilliseconds, UUID userId) {
+    public CredentialData(String accessToken, String refreshToken, Long expirationTimeMilliseconds, Long refreshTokenExpirationTimeMilliseconds) {
         this();
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
         this.expirationTimeMilliseconds = expirationTimeMilliseconds;
         this.refreshTokenExpirationTimeMilliseconds = refreshTokenExpirationTimeMilliseconds;
-        this.userId = userId;
     }
 
-    public CredentialData(Credential credential, UUID user) {
+    public CredentialData(Credential credential) {
         this();
         setAccessToken(credential.getAccessToken());
         setRefreshToken(credential.getRefreshToken());
         setExpirationTimeMilliseconds(credential.getExpirationTimeMilliseconds());
-        setUserId(user);
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
     }
 
     public String getAccessToken() {
@@ -87,7 +75,6 @@ public class CredentialData {
     @Override
     public String toString() {
         return "CredentialData{"
-                + "userId=" + userId
                 + ", accessToken='" + accessToken + '\''
                 + ", refreshToken='" + refreshToken + '\''
                 + ", expirationTimeMilliseconds=" + expirationTimeMilliseconds
