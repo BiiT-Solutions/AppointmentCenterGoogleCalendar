@@ -11,29 +11,23 @@ import com.google.gson.JsonSerializer;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
 
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
-    private static final int DIGITS = 3;
 
-    private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
-            .parseCaseInsensitive()
-            .appendInstant(DIGITS)
-            .toFormatter().withResolverStyle(ResolverStyle.STRICT);
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
     @Override
     public JsonElement serialize(LocalDateTime localDate,
                                  Type type,
                                  JsonSerializationContext jsonSerializationContext) {
-        return new JsonPrimitive(localDate.format(FORMATTER));
+        return new JsonPrimitive(localDate.format(FORMATTER) + "Z");
     }
 
     @Override
     public LocalDateTime deserialize(JsonElement jsonElement,
                                      Type type,
                                      JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
-        return LocalDateTime.parse(jsonElement.getAsJsonPrimitive().getAsString(), FORMATTER);
+        return LocalDateTime.parse(jsonElement.getAsJsonPrimitive().getAsString().replace("Z", ""), FORMATTER);
     }
 
 }
