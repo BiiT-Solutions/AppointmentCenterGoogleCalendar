@@ -20,7 +20,7 @@ public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, Json
     public JsonElement serialize(LocalDateTime localDate,
                                  Type type,
                                  JsonSerializationContext jsonSerializationContext) {
-        return new JsonPrimitive(localDate.format(FORMATTER));
+        return new JsonPrimitive(localDate.format(FORMATTER) + "Z");
     }
 
     @Override
