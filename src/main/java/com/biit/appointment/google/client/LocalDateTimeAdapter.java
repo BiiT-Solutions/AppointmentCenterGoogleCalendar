@@ -15,10 +15,11 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
 
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
+    private static final int DIGITS = 3;
 
     private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder()
             .parseCaseInsensitive()
-            .appendInstant()
+            .appendInstant(DIGITS)
             .toFormatter().withResolverStyle(ResolverStyle.STRICT);
 
     @Override
