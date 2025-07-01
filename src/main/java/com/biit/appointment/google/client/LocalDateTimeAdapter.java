@@ -14,13 +14,13 @@ import java.time.format.DateTimeFormatter;
 
 public class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_INSTANT;
 
     @Override
     public JsonElement serialize(LocalDateTime localDate,
                                  Type type,
                                  JsonSerializationContext jsonSerializationContext) {
-        return new JsonPrimitive(localDate.format(FORMATTER));
+        return new JsonPrimitive(localDate.format(FORMATTER) + "Z");
     }
 
     @Override
