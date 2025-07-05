@@ -1,6 +1,7 @@
 package com.biit.appointment.google.converter;
 
 import com.biit.appointment.core.models.AppointmentDTO;
+import com.biit.appointment.core.models.CalendarProviderDTO;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
@@ -26,6 +27,7 @@ public class AppointmentEventConverter {
         final AppointmentDTO appointmentDTO = new AppointmentDTO();
         appointmentDTO.setTitle(from.getSummary());
         appointmentDTO.setDescription(from.getDescription());
+        appointmentDTO.setCalendarProvider(CalendarProviderDTO.GOOGLE);
 
         //All day event.
         if (from.getStart().getDate() != null) {
