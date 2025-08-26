@@ -24,13 +24,13 @@ jobs:
           distribution: 'temurin'
       - name: Download Maven
         run: |
-          curl -sL https://www-eu.apache.org/dist/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.zip -o maven.zip
+          curl -sL https://www-eu.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.zip -o maven.zip
           apt-get update
           apt-get -y install unzip
           unzip -d /usr/share maven.zip
           rm maven.zip
-          ln -s /usr/share/apache-maven-3.9.9/bin/mvn /usr/bin/mvn
-          echo "M2_HOME=/usr/share/apache-maven-3.9.9" | tee -a /etc/environment
+          ln -s /usr/share/apache-maven-3.9.11/bin/mvn /usr/bin/mvn
+          echo "M2_HOME=/usr/share/apache-maven-3.9.11" | tee -a /etc/environment
       - name: Mvn Settings
         uses: whelk-io/maven-settings-xml-action@v22
         with:
