@@ -10,8 +10,8 @@ import com.biit.appointment.google.converter.AppointmentEventConverter;
 import com.biit.appointment.google.converter.GoogleCalendarCredentialsConverter;
 import com.biit.appointment.google.logger.GoogleCalDAVLogger;
 import com.biit.server.exceptions.UserNotFoundException;
-import com.biit.server.security.IAuthenticatedUser;
 import com.biit.server.security.IAuthenticatedUserProvider;
+import com.biit.server.security.model.IAuthenticatedUser;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import org.springframework.stereotype.Controller;
 
@@ -32,11 +32,11 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
     private final GoogleClientProvider googleClientProvider;
     private final AppointmentEventConverter eventConverter;
     private final GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter;
-    private final IAuthenticatedUserProvider authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<IAuthenticatedUser> authenticatedUserProvider;
 
     public GoogleCalendarService(GoogleClientProvider googleClientProvider, AppointmentEventConverter eventConverter,
                                  GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter,
-                                 IAuthenticatedUserProvider authenticatedUserProvider) {
+                                 IAuthenticatedUserProvider<IAuthenticatedUser> authenticatedUserProvider) {
         this.googleClientProvider = googleClientProvider;
         this.eventConverter = eventConverter;
         this.googleCalendarCredentialsConverter = googleCalendarCredentialsConverter;
