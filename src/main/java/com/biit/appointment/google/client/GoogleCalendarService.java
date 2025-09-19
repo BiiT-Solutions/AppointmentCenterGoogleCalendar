@@ -26,13 +26,13 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
 
     //Refresh tokens expires after six months of not using them (https://developers.google.com/identity/protocols/oauth2#expiration).
     public static final int REFRESH_TOKEN_EXPIRATION_DAYS = 7;
-    public static final long REFRESH_TOKEN_EXPIRATION_SECONDS = (REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60) - 1;
+    public static final long REFRESH_TOKEN_EXPIRATION_SECONDS = (REFRESH_TOKEN_EXPIRATION_DAYS * 24 * 60 * 60) - 1L;
     private static final int MILLIS = 1000;
 
     private final GoogleClientProvider googleClientProvider;
     private final AppointmentEventConverter eventConverter;
     private final GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter;
-    private final IAuthenticatedUserProvider<IAuthenticatedUser> authenticatedUserProvider;
+    private final IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider;
 
     public GoogleCalendarService(GoogleClientProvider googleClientProvider, AppointmentEventConverter eventConverter,
                                  GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter,
