@@ -36,7 +36,7 @@ public class GoogleCalendarService implements IExternalProviderCalendarService {
 
     public GoogleCalendarService(GoogleClientProvider googleClientProvider, AppointmentEventConverter eventConverter,
                                  GoogleCalendarCredentialsConverter googleCalendarCredentialsConverter,
-                                 IAuthenticatedUserProvider<IAuthenticatedUser> authenticatedUserProvider) {
+                                 IAuthenticatedUserProvider<? extends IAuthenticatedUser> authenticatedUserProvider) {
         this.googleClientProvider = googleClientProvider;
         this.eventConverter = eventConverter;
         this.googleCalendarCredentialsConverter = googleCalendarCredentialsConverter;
