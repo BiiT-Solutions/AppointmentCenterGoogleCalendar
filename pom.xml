@@ -1,18 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.biit-solutions.appointment</groupId>
     <artifactId>google-calendar</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.33-SNAPSHOT</version>
+    <version>0.2.33</version>
     <name>Google Calendar Client</name>
 
     <parent>
         <groupId>com.biit-solutions</groupId>
         <artifactId>versions</artifactId>
         <version>[1.0,1.1)</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <licenses>
@@ -45,7 +44,7 @@
         <connection>scm:git:ssh://git@github.com/BiiT-Solutions/AppointmentCenterGoogleCalendar.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/BiiT-Solutions/AppointmentCenterGoogleCalendar.git</developerConnection>
         <url>https://github.com/BiiT-Solutions/AppointmentCenterGoogleCalendar.git</url>
-        <tag>google-calendar-0.1.0</tag>
+        <tag>google-calendar-0.2.33</tag>
     </scm>
 
     <properties>
