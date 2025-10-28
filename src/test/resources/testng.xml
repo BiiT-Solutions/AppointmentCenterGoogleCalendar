@@ -9,8 +9,8 @@
         <groups>
             <run>
                 <!-- Jenkins cannot obtain the tokens. It is disabled on jenkins with a -DskipTests -->
-                <include name="googleClientTest"/>
-                <include name="googleCredentialsTest"/>
+                <exclude name="googleClientTest"/>
+                <exclude name="googleCredentialsTest"/>
                 <!-- Not working as we cannot get a correct token for localhost -->
                 <exclude name="tokenTests"/>
                 <exclude name="eventTests"/>
