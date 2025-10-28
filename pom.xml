@@ -4,7 +4,7 @@
     <groupId>com.biit-solutions.appointment</groupId>
     <artifactId>google-calendar</artifactId>
     <packaging>jar</packaging>
-    <version>0.2.33</version>
+    <version>0.2.34-SNAPSHOT</version>
     <name>Google Calendar Client</name>
 
     <parent>
@@ -44,7 +44,7 @@
         <connection>scm:git:ssh://git@github.com/BiiT-Solutions/AppointmentCenterGoogleCalendar.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/BiiT-Solutions/AppointmentCenterGoogleCalendar.git</developerConnection>
         <url>https://github.com/BiiT-Solutions/AppointmentCenterGoogleCalendar.git</url>
-        <tag>google-calendar-0.2.33</tag>
+        <tag>google-calendar-0.1.0</tag>
     </scm>
 
     <properties>
